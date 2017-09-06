@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "管理员工作站";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("Admin_default", new { controller = "Admin", action = "UserManagement" })">
+                    <span class="glyphicon glyphicon-user ico"></span>
+                    用户管理
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,238 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model OldHouse.Web.Models.HouseDiscoverDto
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container container-responsive">
+    <div class="detail-section">
+        @using (Html.BeginForm("Discover", "House", new {ReturnUrl = ViewBag.ReturnUrl}, FormMethod.Post, new {role = "form", id = "discoverHouse"}))
+        {
+            @Html.AntiForgeryToken()
+            <h4>分享你的城迹</h4>
+            @Html.ValidationSummary(false, "", new { @class = "error" })
+            <input type="hidden" name="Id" value="@Model.Id"/>
+            <input type="hidden" name="OwnerId" value="@Model.OwnerId"/>
+            <input type="hidden" name="CodeName" value="@Model.CodeName"/>
+            <input type="hidden" name="Rating" value="@Model.Rating"/>
+            <input type="hidden" name="Cover" value="@Model.Cover"/>
+            <input type="hidden" name="IsApproved" value="@Model.IsApproved"/>
+            <hr class="solid-line-grey"/>
+            <div class="row">
+                <div class="col-md-6" style="padding: 0">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Name)
+                        <span class="error">(必填)@Html.ValidationMessageFor(m => m.Name)</span>
+                        @Html.TextBoxFor(m => m.Name, new {@class = "full-width form-control", placeholder = "如：周恩来故居"})
+                    </div>
+                    <div class="panel">
+                        <div class="panel-heading panel-primary">
+                            标签：<span style="font-weight: 100;">（如：民国建筑、武汉大学、外滩建筑等）</span>
+                        </div>
+                        <div class="panel-body">
+                            @Html.TextBoxFor(m => m.Tags, new {@class = "tags", type = "hidden"})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="map">我当前的位置（<span id="qqMap">定位中。。。</span>）</label>
+                        <span class="error">(必填)</span>
+                        <input type="text" name="Lnt" class="hidden" id="lnt" value="0"/>
+                        <input type="text" name="Lat" class="hidden" id="lat" value="0"/>
+                        <div class="map-section">
+                            <div id="map-container"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>所在地</label>
+                        <span class="error">(必填)</span>
+                        <input type="hidden" name="Country" />
+                        <input type="hidden" name="Province" />
+                        <input type="hidden" name="City" />
+                        <input name="LocationString" class="full-width form-control" placeholder="详细地理位置" />
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-5" style="padding: 0">
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.BuiltYear)
+                        <span class="error">(必填)</span>
+                        <select class="form-control full-width" name="BuiltYear" id="yearSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Content">上传照片</label>
+                        <div id="img-upload" class="dropzone">
+                            <div id="img-add" class="dz-image-preview dz-preview">
+                                <div class="dz-image">
+                                    <span class="glyphicon glyphicon-plus" style="font-size: 50px; padding: 30px;"></span>
+                                </div>
+                            </div>
+                            @if (@Model.Images != null)
+                            {
+                                foreach (var image in @Model.Images)
+                                {
+                                    @Html.Partial("_PartialImageThumb", image)
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Abstarct)
+                        <span class="error">(必填)@Html.ValidationMessageFor(m => m.Abstarct)</span>
+                        @Html.TextAreaFor(m => m.Abstarct, new { @class = "full-width form-control", rows = "2", placeholder = "请用一句话描述这里的特色。如：老汉口人每逢喜事，都会去“邦可”买个大蛋糕", onkeydown = "checkLength(this,50,'更多内容请添加描述')", onkeyup = "checkLength(this,50,'更多内容请添加描述')", onpaste = "checkLength(this,50,'更多内容请添加描述')" })
+                        <span style="font-size:15px;" class="validNum"></span>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(m => m.Description)
+                        <span class="error">@Html.ValidationMessageFor(m => m.Description)</span>
+                        @Html.TextAreaFor(m => m.Description, new { @class = "full-width form-control", rows = "14", placeholder = "对这里的历史故事、建设过程、建筑特色、建筑功能的一些说明，也可以是发生在此地的你的个人经历，可长可短，随意填写。" })
+                    </div>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <button type="button" class="btn btn-primary" onclick="submitForm() ">保存并跳转</button>
+                @Html.ActionLink("直接返回", "Near", "House", new { area = "House" }, new { @class = "btn btn-default" })
+            </div>
+        }
+    </div>
+</div>
+
+<div id="hidden_for_app" class="hidden">
+    <div class="dz-preview dz-processing dz-success dz-complete dz-image-preview">
+        <div class="dz-image">
+            <img data-dz-thumbnail="" src="" style="width: 120px; height: 120px;">
+        </div>
+        <a data-dz-remove="" href="javascript:undefined;" class="dz-remove" onclick=" deleteParent(this) ">删除</a>
+        <input type="text" value="" class="hidden" name="Images[]">
+    </div>
+</div>
+@section styles
+{
+    <link type="text/css" href="/Content/dropzone.css" rel="Stylesheet" />
+    @Styles.Render("~/Content/css/tagsinput")
+}
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/tagsinput")
+    <script src="/Scripts/dropzone.js"></script>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=4QCBZ-SWRH5-JC5I6-QQ6WW-GZWG6-6WF5K"></script>
+    <script>
+    //year select
+    var myDate = new Date();
+    var year = myDate.getFullYear();
+    $("#yearSelect").prepend('<option value="1">未知</option>');
+    for (var i = year; i >= 1840; i--) {
+        $("#yearSelect").prepend('<option value="' + i + '">' + i + '年</option>');
+    }
+    $("#yearSelect").prepend('<option value="1000">1840年以前</option>');
+    //show map
+    if (typeof qq !== "undefined")
+    {
+        var map = new qq.maps.Map(document.getElementById("map-container"), {
+            mapTypeControl: false,
+            zoom: 13
+        });
+        var marker = new qq.maps.Marker({
+            map: map
+        });
+
+        var customZoomDiv = document.createElement("div");
+        customZoomDiv.style.cssText = "padding:5px;border:2px solid #86acf2;background:#ffffff;";
+        customZoomDiv.index = 1; //设置在当前布局中的位置
+        customZoomDiv.innerHTML = "@Model.LocationString";
+        map.controls[qq.maps.ControlPosition.TOP_RIGHT].push(customZoomDiv);
+
+        qq.maps.event.addListener(map, 'click', function (event) {
+            marker.setPosition(event.latLng);
+            geocoder.getAddress(event.latLng);
+        });
+
+        var geocoder = new qq.maps.Geocoder({
+            complete: function (result) {
+                $("input[name='LocationString']").val(result.detail.address);
+                customZoomDiv.innerHTML = result.detail.address;
+                $("input[name='Country']").val(result.detail.addressComponents.country);
+                $("input[name='Province']").val(result.detail.addressComponents.province);
+                $("input[name='City']").val(result.detail.addressComponents.city);
+                $('#lnt').val(result.detail.location.lng);
+                $('#lat').val(result.detail.location.lat);
+                $("#qqMap").text("可点击地图校正");
+            }
+        });
+        function distInitialise(point) {
+            position = new qq.maps.LatLng(point.coords.latitude, point.coords.longitude);
+            console.log(position);
+            geocoder.getAddress(position);
+            marker.setPosition(position);
+            map.panTo(position);
+        }
+
+        var houseId = location.href.substr(location.href.indexOf("/Discover") + 10);
+        if (houseId === null || houseId === "") {
+            getLocation(distInitialise);
+        }
+        else {
+            $("#yearSelect").val("@Model.BuiltYear");
+            var point = {
+                country: "@Model.Country",
+                province: "@Model.Province",
+                city: "@Model.City",
+                coords: {
+                    longitude: "@Model.Lnt",
+                    latitude: "@Model.Lat"
+                }
+            };
+            distInitialise(point);
+        }
+    }
+    else {
+        $("#qqMap").text("地图暂不可用，请稍后再试");
+    }
+    $("input[name='Tags']").tagsInput({ width: 'auto', maxTags: 20 ,defaultText:"（回车添加）"});
+    //for (var i = activity_data.Tags.length - 1; i >= 0; i--) {
+    //    if (activity_data.Tags[i] != "" && activity_data.Tags[i] != null) {
+    //        $("input[name='activitytags']").addTag(activity_data.Tags[i]);
+    //    }
+    //}
+
+    //img control
+    Dropzone.autoDiscover = false;
+    $("#img-upload").dropzone(
+    {
+        url: "/api/content/UploadHouseImage",
+        paramName: "Images", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        maxFiles: 10, //how many files this Dropzone handles
+        uploadMultiple: false,
+        addRemoveLinks: true,
+        acceptedFiles: ".jpeg, image/jpeg,image/png,image/gif,image/bmp",
+        dictRemoveFile: "删除",
+        dictFallbackMessage: "请使用Chrome 7+、Firefox 4+、IE 10+、Opera 12+、Safari 6+获得更好体验",
+        dictDefaultMessage: "",
+        dictFileTooBig: "图片太大({{filesize}}MiB)，请限制在{{maxFilesize}}MiB以下。",
+        dictInvalidFileType: "支持图片格式：jpg,jpeg,png,gif,bmp",
+        dictResponseError: "未知错误：{{statusCode}}",
+        dictCancelUpload: "取消上传",
+        dictCancelUploadConfirmation: "确定取消上传此图片？",
+        dictRemoveFileConfirmation: "确定删除此图片？",
+        dictMaxFilesExceeded: "上传图片不能超过10张。",
+        clickable: "#img-add"
+    });
+
+    function submitForm()
+    {
+        if ($("input[name='Images[]']").length > 0)
+        {
+            $("input[name='Cover']").val($("input[name='Images[]']:first").val());
+        }
+        $("#discoverHouse").submit();
+    }
+
+    function AndroidAppUpdateThumb(path) {
+        $("#hidden_for_app").find("img").attr("src", path);
+        $("#hidden_for_app").find("input").attr("value", path);
+        $("#img-upload").append($("#hidden_for_app").children().clone());
+    }
+
+
+</script>
+}

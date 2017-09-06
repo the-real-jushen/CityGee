@@ -1,0 +1,17 @@
+<resources>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="action_register">注册</string>
+    <string name="action_guest_in">先看看</string>
+    <string name="action_sign_in_short">登录</string>
+
+    <string name="error_invalid_email">Email格式不对</string>
+    <string name="error_invalid_password">密码太短</string>
+    <string name="error_incorrect_password">是不是密码错了？</string>
+    <string name="error_field_required">这里一定要填</string>
+
+    <string name="cookie_name_login">.Jtext103.AppCookie</string>
+</resources>

@@ -1,0 +1,5 @@
+﻿@model OldHouse.Web.Models.LrfDto
+
+<div class="my-heart click @Model.Id" onclick="setupLike('@Model.Id','@ViewBag.UserClient')" title="点赞" data-toggle="tooltip" data-placement="top">
+    <span class="glyphicon LrfTimes @(Model.DidILrf ? "glyphicon-heart" : "glyphicon-heart-empty")">@Model.LrfCount</span>
+</div>

@@ -1,0 +1,297 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "城迹";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="free-wall-logo hidden-xs hidden-md" style="background-color:#ffffff;"></div>
+<img class="visible-sm visible-xs" src="~/Content/Images/components/sitelogo.png" style="width:100%;"/>
+@section scripts
+{
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+
+        $(function () {
+            var wall = new Freewall('.free-wall-logo');
+            var temp = "<div class='cell' style='width:{width}px; height: {height}px; background-color: {color}'><div class='cover'></div></div>";
+            var colour = [
+				"#DAA520",
+				"#CD950C",
+				"#EEB422",
+				"#CD9B1D"
+            ];
+
+            var w = 1, h = 1, html = '', color = '', limitItem = 420;
+            for (var i = 0; i < limitItem; ++i) {
+                h = 1;
+                w = 2 + 4 * Math.random() << 0;
+                color = colour[colour.length * Math.random() << 0];
+                html += temp.replace(/\{height\}/g, h * 20).replace(/\{width\}/g, w * 15).replace("{color}", color);
+            }
+            wall.container.html(html);
+            wall.reset({
+                selector: '.cell',
+                animate: true,
+                cellW: 15,
+                cellH: 20,
+                gutterX: 2,
+                gutterY: 2,
+                delay: 10,
+                onResize: function () {
+                    this.refresh();
+                    var totalCol = this.container.attr('data-total-col');
+                    var offsetLeft = Math.round(totalCol / 2 - 31);
+                    this.setHoles(getPosition(offsetLeft));
+                    this.refresh();
+                },
+                onBlockActive: function (block, setting) {
+                    // check for showing brick;
+                    if (block != null) {
+                        $(this).css({
+                            top: -10000,
+                            left: block.left
+                        });
+                    } else {
+                        $(this).css({
+                            opacity: 0
+                        })
+                    }
+                },
+                onComplete: function () {
+                    wall.reset({
+                        delay: 0,
+                        animate: false,
+                        onBlockActive: function () { }
+                    })
+                }
+            });
+
+            function getPosition(offsetLeft) {
+                return [
+					// C
+					{
+					    top: 3,
+					    left: offsetLeft,
+					    width: 7,
+					    height: 2
+					},
+					{
+					    top: 4,
+					    left: offsetLeft,
+					    width: 2,
+					    height: 10
+					},
+					{
+					    top: 13,
+					    left: offsetLeft,
+					    width: 7,
+					    height: 2
+					},
+					// i
+					{
+					    top: 6,
+					    left: offsetLeft + 9,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 9,
+					    width: 2,
+					    height: 6
+					},
+					// t
+					{
+					    top: 6,
+					    left: offsetLeft + 15,
+					    width: 2,
+					    height: 8
+					},
+					{
+					    top: 8,
+					    left: offsetLeft + 13,
+					    width: 6,
+					    height: 2
+					},
+					{
+					    top: 14,
+					    left: offsetLeft + 15,
+					    width: 4,
+					    height: 1
+					},
+					// y
+					{
+					    top: 8,
+					    left: offsetLeft + 28,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 10,
+					    left: offsetLeft + 27,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 12,
+					    left: offsetLeft + 26,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 13,
+					    left: offsetLeft + 25,
+					    width: 1,
+					    height: 2
+					},
+					{
+					    top: 15,
+					    left: offsetLeft + 24,
+					    width: 1,
+					    height: 1
+					},
+					{
+					    top: 16,
+					    left: offsetLeft + 23,
+					    width: 1,
+					    height: 1
+					},
+					{
+					    top: 17,
+					    left: offsetLeft + 22,
+					    width: 1,
+					    height: 1
+					},
+					{
+					    top: 18,
+					    left: offsetLeft + 21,
+					    width: 1,
+					    height: 1
+					},
+					{
+					    top: 8,
+					    left: offsetLeft + 21,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 10,
+					    left: offsetLeft + 22,
+					    width: 2,
+					    height: 2
+					},
+					{
+					    top: 12,
+					    left: offsetLeft + 23,
+					    width: 2,
+					    height: 2
+					},
+					// g
+					{
+					    top: 9,
+					    left: offsetLeft + 37,
+					    width: 2,
+					    height: 10
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 32,
+					    width: 5,
+					    height: 2
+					},
+					{
+					    top: 10,
+					    left: offsetLeft + 32,
+					    width: 2,
+					    height: 5
+					},
+					{
+					    top: 13,
+					    left: offsetLeft + 32,
+					    width: 5,
+					    height: 2
+					},
+					{
+					    top: 18,
+					    left: offsetLeft + 32,
+					    width: 5,
+					    height: 1
+					},
+                    {
+                        top: 17,
+                        left: offsetLeft + 32,
+                        width: 2,
+                        height: 1
+                    },
+					// e
+					{
+					    top: 9,
+					    left: offsetLeft + 41,
+					    width: 2,
+					    height: 6
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 43,
+					    width: 4,
+					    height: 1
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 46,
+					    width: 2,
+					    height: 3
+					},
+					{
+					    top: 12,
+					    left: offsetLeft + 43,
+					    width: 5,
+					    height: 1
+					},
+					{
+					    top: 14,
+					    left: offsetLeft + 43,
+					    width: 5,
+					    height: 1
+					},
+					// e
+					{
+					    top: 9,
+					    left: offsetLeft + 49,
+					    width: 2,
+					    height: 6
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 51,
+					    width: 4,
+					    height: 1
+					},
+					{
+					    top: 9,
+					    left: offsetLeft + 54,
+					    width: 2,
+					    height: 3
+					},
+					{
+					    top: 12,
+					    left: offsetLeft + 51,
+					    width: 5,
+					    height: 1
+					},
+					{
+					    top: 14,
+					    left: offsetLeft + 51,
+					    width: 5,
+					    height: 1
+					},
+                ];
+            }
+            wall.fitZone();
+            var totalCol = wall.container.attr('data-total-col');
+            var offsetLeft = Math.round(totalCol / 2 - 31);
+            wall.setHoles(getPosition(offsetLeft));
+            wall.refresh();
+        })
+    </script>
+}

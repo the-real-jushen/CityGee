@@ -1,0 +1,170 @@
+﻿<div class="banner" id="banner1">
+    <div class="row">
+        <div class="col-sm-3 pull-left  @(ViewBag.User == null ? "" : "hidden-xs")" style="padding: 0; margin: 0;">
+            <img style="height: 190px;" src="/Content/Images/components/Banner.png" />
+        </div>
+
+
+        <div class="col-sm-4 float-left hidden-xs" style="max-width: 290px;">
+            <h1 style="display: inline;">
+                <br />老房子
+            </h1>
+            <br /><h3 style="display: inline;">&nbsp;&nbsp;&nbsp;&nbsp;发现分享身边的历史</h3>
+        </div>
+        @if (ViewBag.User != null)
+        {
+            <div class="col-sm-4 col-xs-10 pull-right" style="padding: 25px;">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <a href="#">
+                            <img class="avatar-img" src="/Content/Images/avatar/@ViewBag.User.Avatar" />
+                        </a>
+                    </div>
+                    <div class="col-xs-6">
+                        <span> @ViewBag.User.NickName</span><br />
+                        <a id='logout1' href="#">退出登录</a>
+                    </div>
+                </div>
+            </div>
+
+        }
+    </div>
+
+        
+
+</div>
+
+    
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+</head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<body>
+
+    <div class="navbar navbar-inverse navbar-static-top" id="topnavbar">
+
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            @Html.ActionLink("发现老房子", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav pull-right">
+                <li>
+                    <a href="#feedbackModal" data-toggle="modal" style="color: #ff6347 !important">我有话要说！</a>
+                </li>
+                <li>@Html.ActionLink("附近的房子", "Near", "House", new { area = "House" }, null)</li>
+                <li class="nav-divider @(ViewBag.User == null ? "" : "hidden")"></li>
+                <li class="@(ViewBag.User == null ? "" : "hidden")">
+                    @Html.ActionLink("登录", "Login", "Account", new { area = "Account" }, null)
+                </li>
+                <li class="@(ViewBag.User == null ? "" : "hidden")">
+                    @Html.ActionLink("注册", "Register", "Account", new { area = "Account" }, null)
+                </li>
+                <li class="nav-divider"></li>
+                <li>@Html.ActionLink("API", "Index", "Help", new { area = "" }, null)</li>
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - 老房子 - 巨神 oldhouse@volq.org</p>
+        </footer>
+    </div>
+
+
+    <div id="feedbackModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">感谢您的宝贵意见！</h3>
+                </div>
+                <div class="modal-body">
+                    
+                    <form id="feedbackForm" method="post">
+                        <input type="hidden" value="@Request.Url.AbsoluteUri" name="CreatedUrl">
+                        <input type="hidden" value="@(ViewBag.User == null ? "Anonymous@" + Request.UserHostAddress : ViewBag.User.UserName)" name="UserName">
+                        <textarea class="form-control full-width" rows="8" name="Content" placeholder="请告诉我们您的宝贵意见或建议，或者就说说您现在的心情吧！您的反馈对我们产品的完善至关重要。"></textarea>
+                    </form>
+                   
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+                    <button id="feedbackSubmit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+@Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/business")
+
+    <script>
+
+
+        $(function () {
+            $('#topnavbar').affix({
+                offset: {
+                    top: $('#banner1').height()
+                }
+            });
+        });
+
+        $("#logout1").on("click", function () {
+            $.post("@Url.Action("Logout", "Account", new {area = "Account"})", function (data) {
+                window.location.replace("/");
+            });
+        });
+
+        $('#feedbackSubmit').click(function (e) {  
+            e.preventDefault();
+            $.post('/api/feedback',
+               $('#feedbackForm').serialize(), 
+               function(data, status, xhr) {
+                   alert("非常感谢您！");
+                   $('#feedbackModal').modal('toggle');
+               });
+            
+        });
+
+    </script>
+
+
+    <script>
+        //it is a fucking pain in the ass that you can not wire up event in partial view
+        //in pagingControl.js
+        $(function () {
+            wireupPaging();
+
+        });
+    </script>
+
+
+
+
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

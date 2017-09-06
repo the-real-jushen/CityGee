@@ -1,0 +1,42 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "编辑工作站";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("Editor_default", new { controller = "Editor", action = "ReleaseFeed" })">
+                    <span class="glyphicon glyphicon-comment ico"></span>
+                    发布新鲜事
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("Editor_default", new { controller = "Editor", action = "ReleaseArticle" })">
+                    <span class="glyphicon glyphicon-fire ico"></span>
+                    发布新闻
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("Editor_default", new { controller = "Editor", action = "HouseManagement" })">
+                    <span class="glyphicon glyphicon-th-large ico"></span>
+                    城迹管理
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="javascript:void(0);">
+                    <span class="glyphicon glyphicon-check ico"></span>
+                    签到管理
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

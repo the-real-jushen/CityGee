@@ -1,0 +1,8 @@
+﻿@model List<OldHouse.Web.Models.HouseBrief>
+
+@{
+    foreach (var house in Model)
+    {
+        @Html.Partial("_PartialHouseBrief", house)
+    }
+}

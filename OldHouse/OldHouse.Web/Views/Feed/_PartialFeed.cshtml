@@ -1,0 +1,43 @@
+﻿@model List<OldHouse.Web.Models.FeedDto>
+
+@foreach (var feed in Model)
+{
+    var target = feed.NewBlank?"_blank":"_self";
+    
+    <div class="@feed.Id feed-card card @feed.Type">
+        <div class="header row">
+            <div class="col-xs-8">
+                <a href="@feed.DestinationLink" target="@target" title="跳转到详情页面" data-toggle="tooltip" data-placement="top">
+                    <h5>@feed.Title</h5>
+                    <div class="time">@feed.Date<br />@feed.Time</div>
+                </a>
+            </div>
+            @if (feed.MessageFrom != null)
+            {
+                <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @feed.MessageFrom.Id })" target="_blank" class="from col-xs-4">
+                    <img src="/Content/Images/avatar/@feed.MessageFrom.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                    <div class="one-line">@feed.MessageFrom.NickName</div>
+                </a>
+            }
+        </div>
+
+        <div class="content">
+            <a href="@feed.DestinationLink" target="@target" title="跳转到详情页面" data-toggle="tooltip" data-placement="top">
+                @if (@feed.Pictures != null && @feed.Pictures.Count > 0)
+                {
+                    <img src="@feed.Pictures.First()" class="img-responsive full-width" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'" />
+                }
+                <div class="bubble">
+                    <div class="bubble-item">
+                        <span class="triangle"></span>
+                        <div class="article">
+                            <p>
+                                @feed.Text
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+}

@@ -1,0 +1,26 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "程序猿";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("HelpPage_Default", new { controller = "Help", action = "Index" })">
+                    <span class="glyphicon glyphicon-wrench ico"></span>
+                    API
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-3" style="padding: 10px;">
+            <div class="card operation-card">
+                <a href="@Url.RouteUrl("Feedback_default", new { controller = "Feedback", action = "Index" })">
+                    <span class="glyphicon glyphicon-question-sign ico"></span>
+                    用户反馈
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

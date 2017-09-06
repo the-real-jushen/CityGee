@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_PartialSideNavigation", (object)@ViewBag.Visitor)
+<div class="clearfix housDetail-fix"></div>
+<div id="content">
+    @Html.Action("UserCheckins", "Checkin", new { id = ViewBag.Visitor.Id, area = "Checkin" })
+</div>
+
+@section scripts
+{
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+
+    $(function () {
+        wall = new Freewall("#content");
+        wall.reset({
+            selector: '.card',
+            animate: true,
+            cellW: 250,
+            cellH: 'auto',
+            onResize: function () {
+                wall.fitWidth();
+            }
+        });
+        wall.container.find('.card img').load(function () {
+            wall.fitWidth();
+        });
+    });
+    </script>
+}

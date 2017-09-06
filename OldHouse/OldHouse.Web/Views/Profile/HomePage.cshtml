@@ -1,0 +1,245 @@
+﻿@model OldHouse.Web.Models.UserInformationDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_PartialSideNavigation", (object)@ViewBag.Visitor)
+<div class="container">
+    <div id="content">
+        <div class="card full-width profile-card">
+            <div class="content @Model.Id">
+                @if (ViewBag.User != null && Model.Id.Equals(ViewBag.User.Id))
+                {
+                    <a href="@Url.RouteUrl("Profile", new { action = "Setting", id = @ViewBag.User.Id })">
+                        <img src="/Content/Images/avatar/@Model.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                    </a>
+                }
+                else
+                {
+                    <img src="/Content/Images/avatar/@Model.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                }
+                
+                <div style="position:absolute;top:50px;left:10px;" class="operation">
+                    @if (ViewBag.User != null && ViewBag.User.IsAdmin)
+                    {
+                        <span class="glyphicon click glyphicon-pencil @(Model.IsEditor? "true" : "false")" title="主编" data-title="主编" data-toggle="tooltip" data-placement="top" id="Editor" onclick="toggleRole(this,'@Model.Id','@ViewBag.UserClient')"></span><br /><br />
+                        <span class="glyphicon click glyphicon-wrench  @(Model.IsDeveloper? "true" : "false")" title="程序猿" data-title="程序猿" data-toggle="tooltip" data-placement="top" id="Developer" onclick="toggleRole(this,'@Model.Id','@ViewBag.UserClient')"></span>
+                    }
+                </div>
+
+                <div style="position:absolute;top:50px;right:10px;">
+                    @if (ViewBag.User == null || !ViewBag.User.Id.Equals(Model.Id))
+                    {
+                        @Html.Action("FollowMe", "Follow", new { area = "", id = Model.Id })
+                    }
+                </div>
+                <h3>
+                    @Model.NickName
+                    @if (Model.Sex.Equals("男"))
+                    {
+                        <img src="/Content/Images/components/male.png" class="ico-sm" title="@Model.Sex" data-toggle="tooltip" data-placement="top" />
+                    }
+                    else
+                    {
+                        <img src="/Content/Images/components/female.png" class="ico-sm" title="@Model.Sex" data-toggle="tooltip" data-placement="top" />
+                    }
+                </h3>
+                @if (ViewBag.User == null)
+                {
+                    <span style="cursor:pointer;font-size:15px;" class="loginModal"><span class="glyphicon glyphicon-envelope"></span>登陆后查看</span>
+                }
+                else
+                {
+                    <a href="mailto:@(Model.UserName)" style="font-size:15px;"><span class="glyphicon glyphicon-envelope"></span>@Model.UserName</a>
+                    if (Model.Id.Equals(ViewBag.User.Id) && ViewBag.UserClient == "Browser")
+                    {
+                        <a href="javascript:void(0);" style="font-size:15px;" id="logout2">
+                            &nbsp;<span class="glyphicon glyphicon-off"></span>退出登录
+                        </a>
+                    }
+                }
+            </div>
+            <div class="bottom-bar">
+                <div class="row">
+                    <div class="col-lg-6 row">
+                        <div class="col-xs-6 text-left">
+                            <span>等级：</span><span class="badge">@Model.MyLevel</span>
+                        </div>
+                        <div class="col-xs-6 text-left">
+                            <span>分数：</span><span class="badge">@String.Format("{0:F}", Model.MyPoint)</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 row">
+                        <div class="col-xs-6 text-left">
+                            <span>被赞次数：</span><span class="badge">@Model.BeLikedCount</span>
+                        </div>
+                        <div class="col-xs-6 text-left">
+                            <span>粉丝数目：</span><span class="badge">@Model.BeFollowedCount</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card full-width map-card">
+            <div class="content map-section">
+                <div id="map-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="urlQRCode">
+    <div class="item">
+        <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+        <label class="text-justify" for="url">手机请扫描访问本页</label>
+    </div>
+</script>
+
+@section scripts
+{
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=4QCBZ-SWRH5-JC5I6-QQ6WW-GZWG6-6WF5K"></script>
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+
+        $(function () {
+            //radom bg
+            randomSplash();
+            /*wall = new Freewall("#content");
+            wall.reset({
+                selector: '.card',
+                animate: true,
+                cellW: "100%",
+                cellH: 'auto',
+                onResize: function () {
+                    wall.fitWidth();
+                }
+            });
+            wall.container.find('.card img').load(function () {
+                wall.fitWidth();
+            });*/
+            //show map
+            var map = new qq.maps.Map(document.getElementById("map-container"), {
+                mapTypeControl: false,
+                panControl: false,
+                zoom: 5
+            });
+            var info = new qq.maps.InfoWindow({
+                map: map
+            });
+            var userId = '@Model.Id';
+            amplify.request({
+                resourceId: "MyHouses",
+                data: { "id": userId },
+                success: function (data) {
+                    var path = [];
+                    for (var i = 0; i < data.length; i++) {
+                        var position = new qq.maps.LatLng(data[i].Location.coordinates[1], data[i].Location.coordinates[0]);
+                        path.push(position);
+                        var marker = new qq.maps.Marker({
+                            position: position,
+                            map: map
+                        });
+                        qq.maps.event.addListener(marker, 'click', (function (HouseName, position) {
+                            return function () {
+                                info.open();
+                                info.setContent('<div style="text-align:center;white-space:nowrap;' +
+                                'margin:10px;">城迹：' + HouseName + '</div>');
+                                info.setPosition(position);
+                            }
+                        })(data[i].Name, position));
+                        var anchor = new qq.maps.Point(10, 10),
+                              size = new qq.maps.Size(20, 20),
+                              origin = new qq.maps.Point(0, 0),
+	                          markerIcon = new qq.maps.MarkerImage(
+                          "/Content/Images/components/red.png",
+                          size,
+                          origin,
+                          anchor
+                        );
+                        marker.setIcon(markerIcon);
+                    }
+                    var polyline = new qq.maps.Polyline({
+                        path: path,
+                        strokeColor: '#FF6666',
+                        strokeWeight: 5,
+                        strokeDashStyle: "dash",
+                        editable: false,
+                        map: map
+                    });
+                }
+            });
+
+            amplify.request({
+                resourceId: "MyCheckins",
+                data: { "id": userId },
+                success: function (data) {
+                    var path = [];
+                    for (var i = 0; i < data.length; i++) {
+                        var position = new qq.maps.LatLng(data[i].Lat, data[i].Lnt);
+                        path.push(position);
+                        var marker = new qq.maps.Marker({
+                            position: position,
+                            map: map
+                        });
+                        qq.maps.event.addListener(marker, 'click', (function (HouseName, position) {
+                            return function () {
+                                info.open();
+                                info.setContent('<div style="text-align:center;white-space:nowrap;' +
+                                'margin:10px;">签到：' + HouseName + '</div>');
+                                info.setPosition(position);
+                            }
+                        })(data[i].HouseName, position));
+                        var anchor = new qq.maps.Point(10, 10),
+                              size = new qq.maps.Size(20, 20),
+                              origin = new qq.maps.Point(0, 0),
+	                          markerIcon = new qq.maps.MarkerImage(
+                          "/Content/Images/components/blue.png",
+                          size,
+                          origin,
+                          anchor
+                        );
+                        marker.setIcon(markerIcon);
+                    }
+                    var polyline = new qq.maps.Polyline({
+                        path: path,
+                        strokeColor: '#6666FF',
+                        strokeWeight: 5,
+                        strokeDashStyle: "dash",
+                        editable: false,
+                        map: map
+                    });
+                }
+            });
+
+            //QRCode
+            $(".side-fixed .qrCode").append($("#urlQRCode").html());
+            $("#IsEditor").click(function () {
+
+            })
+            $("#IsDeveloper").click(function () {
+
+            })
+            $("#IsAdmin").click(function () {
+
+            })
+            amplify.request({
+                resourceId: 'QRCode',
+                data: {
+                    "url": location.href,
+                },
+                success: function (data) {
+                    $("#QRCode").attr("src", "data:img/png;base64," + data);
+                }
+            });
+            if (is_weixin()) {
+                $('#shareInWeixin').slideDown("slow");
+            }
+        });
+        function randomSplash() {
+            var n = 6;//Math.floor(Math.random() * 13) + 1;
+            $('.profile-card .content').css('background', "url(/Content/Images/components/bg_" + n + ".png) no-repeat #808080");
+            $('.profile-card .content').css("background-size", "200%");
+            $(".profile-card .content").css("background-color", "#b0b0b0");
+        }
+    </script>
+}

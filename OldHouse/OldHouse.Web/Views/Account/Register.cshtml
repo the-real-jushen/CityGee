@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "注册成为城迹用户";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container container-responsive">
+    <div class="row">
+        <div class="col-md-8 hidden-sm hidden-xs">
+            @Html.Partial("_PartialIntroduction")
+        </div>
+        <div class="col-md-4" style="padding:0;margin:0 auto;">
+            <section class="loginForm">
+                <div class="header">
+                    邮箱注册
+                </div>
+                <div class="body">
+                    @Html.Partial("_PartialRegister", new OldHouse.Web.Models.RegisterViewModel())
+                </div>
+                <div class="bottom">
+                    @Html.ActionLink("直接登陆", "Login", new { ReturnUrl = ViewBag.ReturnUrl })
+                    <span class="dotted">|</span>
+                    <a href="@Url.RouteUrl("houseNear")">看看再说</a>
+                    <span class="dotted">|</span>
+                    <a href="#feedbackModal" data-toggle="modal">意见反馈</a>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="urlQRCode">
+    <div class="item">
+        <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+        <label class="text-justify" for="url">手机请扫描注册</label>
+    </div>
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            //radom bg
+            randomSplash();
+            //QRCode
+            $(".side-fixed .qrCode").append($("#urlQRCode").html());
+            amplify.request({
+                resourceId: 'QRCode',
+                data: {
+                    "url": location.href,
+                },
+                success: function (data) {
+                    $("#url").attr("src", "data:img/png;base64," + data);
+                }
+            });
+            if (is_weixin()) {
+                $("#shareInWeixin").slideDown("slow");
+            }
+        })
+        function randomSplash() {
+            if (window.innerWidth > 767)
+            {
+                var n = Math.floor(Math.random() * 18);
+                $('.body-content').css('background', "url(/Content/Images/components/index_" + n + ".jpg) no-repeat #808080");
+                $('.body-content').css("background-size", "150%");
+            }
+        }
+    </script>
+}
+
+

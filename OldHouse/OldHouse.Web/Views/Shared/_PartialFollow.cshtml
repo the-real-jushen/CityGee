@@ -1,0 +1,7 @@
+﻿@*recycle the model from LRF*@ 
+@model OldHouse.Web.Models.LrfDto
+@*todo wan: a little bit of UI polishing*@
+
+<div class="btn my-eye" title="@(Model.DidILrf ? "已关注" : "点击关注")" data-toggle="tooltip" data-placement="top" onclick="toggleFollow(this, '@Model.Id','@ViewBag.UserClient');">
+    <span class="glyphicon @(Model.DidILrf ? "glyphicon-eye-open" : "glyphicon-eye-close")"></span>
+</div>

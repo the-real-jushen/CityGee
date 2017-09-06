@@ -1,0 +1,70 @@
+﻿@model OldHouse.Web.Models.UserInformationDto
+
+<div class="side-navigation">
+    <div class="user-navigation">
+        <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @Model.Id })" class="user-information">
+            <div class="link-ico">
+                <img src="/Content/Images/avatar/@Model.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                <h5 class="one-line">@Model.NickName</h5>
+            </div>
+        </a>
+        @if (ViewBag.User != null && Model.Id.Equals(ViewBag.User.Id))
+        {
+            <a href="@Url.RouteUrl("Profile", new { action = "Setting", id = @ViewBag.User.Id })">
+                <div class="link-ico">
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                    <div class="count"></div>
+                    <span class="description">@(Model.Who)的设置</span>
+                </div>
+            </a>
+        }
+        <a href="@Url.RouteUrl("myHouse", new { id = @Model.Id })">
+            <div class="link-ico">
+                <span class="glyphicon glyphicon-camera" aria-hidden="true"></span>
+                <div class="count">@Model.DiscoveryCount</div>
+                <span class="description">@(Model.Who)的发现</span>
+            </div>
+        </a>
+        <a href="@Url.RouteUrl("myCheckin", new { id = @Model.Id })">
+            <div class="link-ico">
+                <span class="glyphicon glyphicon-flag" aria-hidden="true"></span>
+                <div class="count">@Model.CheckinCount</div>
+                <span class="description">@(Model.Who)的签到</span>
+            </div>
+        </a>
+        <a href="@Url.RouteUrl("MyLiked", new { action = "MyLiked", id = @Model.Id })">
+            <div class="link-ico">
+                <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+                <div class="count">@(Model.LikedHouseCount + Model.LikedCheckinCount)</div>
+                <span class="description">@(Model.Who)的点赞</span>
+            </div>
+        </a>
+        <a href="@Url.RouteUrl("Follow", new { action = "MyFollow",id = @Model.Id })">
+            <div class="link-ico">
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                <div class="count">@Model.FollowCount</div>
+                <span class="description">@(Model.Who)的关注</span>
+            </div>
+        </a>
+    </div>
+    <div class="toggle-navigation">
+        <span class="glyphicon glyphicon-pushpin pull-left" style="display:none;"></span>
+        <span class="glyphicon glyphicon-th-list pull-left"></span>
+        <span class="pull-right">@Model.NickName</span>
+    </div>
+</div>
+
+
+<script>
+    $(".toggle-navigation").click(function () {
+        if ($(".toggle-navigation").hasClass("active")) {
+            $(".user-navigation").slideUp("slow");
+        }
+        else {
+            $(".user-navigation").slideDown("slow");
+        }
+        $(".toggle-navigation").toggleClass("active");
+        $(".toggle-navigation .glyphicon-pushpin").toggle(); 
+        $(".toggle-navigation .glyphicon-th-list").toggle();
+    });
+</script>

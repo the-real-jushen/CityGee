@@ -1,0 +1,400 @@
+﻿@{
+    string query = Request.Url.Query.ToLower().Replace("%2f", "/");
+    int start = query.LastIndexOf("returnurl=") + 10;
+    start = (start < query.Length ? start : query.Length);
+    string queryReturnUrl = query.Substring(start);
+    ViewBag.ReturnUrl = (queryReturnUrl == "" ? Request.Url.AbsolutePath : queryReturnUrl);
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>城迹</title>
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/business")
+</head>
+
+<body>
+    <script>
+        $(function () {
+            if($(window).width() > 768)
+            {
+                $(document).attr("title", "@ViewBag.Title");
+            }
+        })
+    </script>
+
+    @if (ViewBag.UserClient == "Browser")
+    {
+        <div style="min-height:50px;">
+            <div id="shareInWeixin" style="display:none;">
+                <img src="~/Content/Images/components/weixinFriends.png"/>
+                <div class="description">
+                    您可以点击右上角选择<br />
+                    <b>分享到朋友圈</b>&nbsp;或&nbsp;<b>发送给朋友</b>
+                </div>
+                <span class="glyphicon glyphicon-hand-up"></span>
+            </div>
+
+            <div class="banner hidden-sm hidden-xs" id="banner1">
+                <img style="height: 190px;" src="/Content/Images/components/Banner.png" />
+                <a style="position:absolute;top:5px;left:5px;visibility:hidden;" href="@Url.RouteUrl("Default", new { controller = "Home", action = "FunGame" })">
+                    <img src="~/Content/Images/components/sitelogo_xs.png" class="ico-md" />
+                </a>
+                <div class="site-brief @(ViewBag.User == null ? "" : "visible-lg")">
+                    <a href="@Url.RouteUrl("houseNear", new { })">
+                        <h1>城迹</h1>
+                    </a>
+                    <h4>——属于你的城市百科</h4>
+                </div>
+                @if (ViewBag.User != null)
+                {
+                    <div class="row user-brief">
+                        <div class="col-sm-6">
+                            <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @ViewBag.User.Id })" class="avatar">
+                                <img src="/Content/Images/avatar/@ViewBag.User.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                            </a>
+                        </div>
+                        <div class="col-sm-6 information">
+                            <b class="name one-line">@ViewBag.User.NickName</b>
+                            <div class="roles">
+                                <span class="glyphicon glyphicon-camera" title="注册用户" data-toggle="tooltip" data-placement="top"></span>
+                                @if (ViewBag.User.IsEditor)
+                                {
+                                    <span class="glyphicon glyphicon-pencil" title="主编" data-toggle="tooltip" data-placement="top"></span>
+                                }
+                                @if (ViewBag.User.IsDeveloper)
+                                {
+                                    <span class="glyphicon glyphicon-wrench" title="程序猿" data-toggle="tooltip" data-placement="top"></span>
+                                }
+                                @if (ViewBag.User.IsAdmin)
+                                {
+                                    <span class="glyphicon glyphicon-lock" title="管理员" data-toggle="tooltip" data-placement="top"></span>
+                                }
+                            </div>
+                            <a id='logout1' href="#">退出登录</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="pull-right hidden-sm hidden-xs sitelogo">
+                        <a href="@Url.RouteUrl("Account", new { action = "Login", returnUrl = ViewBag.ReturnUrl })">
+                            <img src="~/Content/Images/components/sitelogo.png" />
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <div class="navbar-inverse navbar-static-top" id="topnavbar">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="@Url.RouteUrl("HouseDiscover", new { id = "" })" class="navbar-brand hidden-sm hidden-xs">
+                        <img src="/Content/Images/components/camera.png" class="ico center-block" />
+                        <span>
+                            分享你的城迹
+                        </span>
+                    </a>
+                    @if (ViewBag.User == null)
+                    {
+                        <a href="@Url.RouteUrl("Account", new { action = "Login" , returnUrl = ViewBag.ReturnUrl})" class="navbar-brand visible-sm visible-xs">
+                            <img src="~/Content/Images/components/sitelogo_xs.png" class="logo" />
+                        </a>
+                    }
+                    else
+                    {
+                        <div class="navbar-user visible-sm visible-xs">
+                            <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @ViewBag.User.Id })" class="avatar">
+                                <img src="/Content/Images/avatar/@ViewBag.User.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                                <b class="one-line">@ViewBag.User.NickName</b>
+                            </a>
+                        </div>
+                    }
+                    <div class="navbar-title visible-xs one-line">
+                        @ViewBag.Title
+                    </div>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav pull-right">
+                        <li class="visible-sm visible-xs">@Html.ActionLink("分享你的城迹", "Discover", "House", new { area = "House", id = "" }, new { })</li>
+                        @if (ViewBag.User != null && ViewBag.User.IsEditor)
+                        {
+                            <li>@Html.ActionLink("编辑站", "Index", "Editor", new { area = "" }, new { @class = "highlight" })</li>
+                        }
+                        @if (ViewBag.User != null && ViewBag.User.IsAdmin)
+                        {
+                            <li>@Html.ActionLink("管理站", "Index", "Admin", new { area = "" }, new { @class = "highlight" })</li>
+                        }
+                        @if (ViewBag.User != null && ViewBag.User.IsDeveloper)
+                        {
+                            <li>@Html.ActionLink("程序猿", "Index", "Developer", new { area = "" }, new { @class = "highlight" })</li>
+                        }
+                        <li>
+                            @Html.ActionLink("新鲜事", "Index", "Feed", new { area = "" }, null)
+                        </li>
+                        @if (ViewBag.User != null)
+                        {
+                            <li>
+                                @Html.ActionLink("我的主页", "HomePage", "Profile", new { area = "", id = @ViewBag.User.Id }, null)
+                            </li>
+                        }
+                        <li>@Html.ActionLink("周边城迹", "Near", "House", new { area = "House" }, null)</li>
+                        <li>@Html.ActionLink("用户排名", "Index", "User", new { area = "" }, null)</li>
+                        <li class="nav-divider @(ViewBag.User == null ? "" : "hidden")"></li>
+                        <li class="@(ViewBag.User == null ? "" : "hidden")">
+                            @Html.ActionLink("登录", "Login", "Account", new { area = "Account", returnUrl = ViewBag.ReturnUrl }, null)
+                        </li>
+                        <li class="@(ViewBag.User == null ? "" : "hidden")">
+                            @Html.ActionLink("注册", "Register", "Account", new { area = "Account", returnUrl = ViewBag.ReturnUrl }, null)
+                        </li>
+                        <li class="nav-divider"></li>
+                        <li>
+                            <a href="#feedbackModal" data-toggle="modal" class="highlight">我有话要说！</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="body-content full-width">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </div>
+    
+    @if (ViewBag.UserClient == "Browser")
+    {
+        @Html.Partial("_PartialFooter")
+        <div class="side-fixed visible-lg">
+            <div class="operation">
+                <span class="glyphicon glyphicon-qrcode show-qrCode"></span>
+                <div id="otherOperation"></div>
+            </div>
+            <div class="qrCode">
+                <div class="item">
+                    <img class="img-responsive" id="weixin" src="/Content/Images/components/qrWeiXin.jpg" />
+                    <label class="text-justify" for="weixin">微信扫描关注公众号</label>
+                </div>
+            </div>
+        </div>
+        <div class="right-bottom-fixed">
+            <a href="@Url.RouteUrl("HouseDiscover", new { id = "" })" class="add-operation visible-sm visible-xs" title="分享你的城迹" data-toggle="tooltip" data-placement="top">
+                <img src="/Content/Images/components/camera_orange.png" class="ico center-block" />
+            </a>
+            <span class="glyphicon glyphicon-triangle-top click go-top" title="返回顶部" data-toggle="tooltip" data-placement="top"></span>
+        </div>
+
+        <div id="loginModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <section class="loginForm">
+                            <div class="header">
+                                <a href="javascript:void(0);" id="Login" onclick="showLogin()">登录</a>
+                                <a href="javascript:void(0);" id="Register" onclick="showRegister()">注册</a>
+                            </div>
+                            <div class="login" style="display:none;">
+                                <div class="body">
+                                    <div id="quickLogin">
+                                        @Html.Partial("_PartialQuickLogin")
+                                        <hr class="solid-line-grey" />
+                                    </div>
+                                    @Html.Partial("_PartialLogin", new OldHouse.Web.Models.LoginViewModel())
+                                </div>
+                                <div class="bottom">
+                                    <a href="javascript:void(0);" onclick="showRegister()">注册新账号</a>
+                                    <span class="dotted">|</span>
+                                    <a href="javascript:void(0);">忘记密码</a>
+                                    <span class="dotted">|</span>
+                                    <a href="javascript:void(0);" data-dismiss="modal">暂不登陆</a>
+                                </div>
+                            </div>
+                            <div class="register" style="display:none;">
+                                <div class="body">
+                                    @Html.Partial("_PartialRegister", new OldHouse.Web.Models.RegisterViewModel())
+                                </div>
+                                <div class="bottom">
+                                    <a href="javascript:void(0);" onclick="showLogin()">直接登录</a>
+                                    <span class="dotted">|</span>
+                                    <a href="javascript:void(0);" data-dismiss="modal">暂不登陆</a>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="clearfix housDetail-fix"></div>
+    }
+    
+    <div id="contactFrame">
+        <div onclick="toggleContact(this)" class="toggleContact">
+            聊天室
+            <span class="glyphicon glyphicon-chevron-down"></span>
+        </div>
+        <div class="frame">
+            <div class="list">
+
+            </div>
+            <div class="message">
+                <form action="">
+                    <textarea class="full-width" rows="3"></textarea>
+                    <button type="submit" class="btn btn-default full-width">发送</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="feedbackModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="myModalLabel">感谢您的宝贵意见！</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm" method="post">
+                        <input type="hidden" value="@Request.Url.AbsoluteUri" name="CreatedUrl">
+                        <input type="hidden" value="@(ViewBag.User == null ? "Anonymous@" + Request.UserHostAddress : ViewBag.User.UserName)" name="UserName">
+                        <textarea class="form-control full-width" rows="8" name="Content" placeholder="请告诉我们您的宝贵意见或建议，或者就说说您现在的心情吧！您的反馈对我们产品的完善至关重要。" onkeydown="checkLength(this,300)" onkeyup="checkLength(this,300)" onpaste="checkLength(this,300)"></textarea>
+                        <span style="font-size:15px;" class="validNum"></span>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+                    <button id="feedbackSubmit" class="btn btn-primary">提交</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="imgModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="/Content/Images/components/loading.gif" style="width: 100%" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="alertModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">提醒(<span class="countDown"></span>s后自动关闭)</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">确认</h4>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $(function () {
+            var information = "@ViewBag.Information";
+            if (information) {
+                alertModal(information);
+            }
+            $.AutoComplete('input.email');
+            $("#contactFrame .toggleContact").click();
+            var offsetHeight = 0;
+            if($('#banner1').length > 0)
+            {
+                offsetHeight = $('#banner1').height();
+            }
+            $('#topnavbar').affix({
+                offset: {
+                    top: offsetHeight
+                }
+            });
+            
+            $('[data-toggle="tooltip"]').tooltip();
+
+            showLogin();
+            if (is_weixin()) {
+                $("#isweixin").show();
+                $("#isweixin").siblings().hide();
+                $("img.avatar-img").addClass("weixin");
+            }
+        });
+
+        $("#logout1,#logout2").on("click", function () {
+            $.post('@Url.Action("Logout", "Account", new {area = "Account"})', function (data) {
+                window.location.replace("/");
+            });
+        });
+
+        $('#feedbackSubmit').click(function (e) {  
+            e.preventDefault();
+            if ($("#feedbackForm textarea").val() == "")
+            {
+                $("#feedbackForm .validNum").text("请一定说点什么吧（取消操作请点击取消按钮）！");
+                return;
+            }
+            $.post('/api/feedback',
+               $('#feedbackForm').serialize(), 
+               function(data, status, xhr) {
+                   alertModal("非常感谢您！");
+                   $('#feedbackModal').modal('toggle');
+               });
+            
+        });
+
+        $(".side-fixed").hover(function () {
+            $(".qrCode").fadeIn("slow");
+        }, function () {
+            $(".qrCode").fadeOut("slow");
+        });
+
+        $(".go-top").bind("click", function (event) {
+            $("html, body").animate({ scrollTop: 0 }, 100);
+        });
+
+        $(".loginModal").bind("click", function (event) {
+            $("#loginModal").modal("show");
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

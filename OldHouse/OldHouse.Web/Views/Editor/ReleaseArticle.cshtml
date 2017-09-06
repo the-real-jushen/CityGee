@@ -1,0 +1,78 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "发布新闻";
+}
+@model OldHouse.Web.Models.ReleaseArticleDto
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container">
+    <div id="content">
+        <div class="card full-width">
+            <div class="header">
+                <b class="title"><span class="glyphicon glyphicon-fire"></span>&nbsp;发布Article</b>
+                <a href="@Url.RouteUrl("Editor_default", new { controller = "Editor", action = "index" })" class="pull-right" style="font-size:15px;">
+                    返回编辑站
+                </a>
+            </div>
+            <div class="content">
+                @using (Html.BeginForm("ReleaseArticle", "Editor", FormMethod.Post, new { role = "form", id = "releaseArticle" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="row">
+                        <div class="col-xs-12" style="padding:10px;">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ArticleTitle)
+                                <span class="error">(必填)@Html.ValidationMessageFor(m => m.ArticleTitle)</span>
+                                @Html.TextBoxFor(m => m.ArticleTitle, new { @class = "full-width form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.ArticleBody)
+                                <span class="error">(必填)@Html.ValidationMessageFor(m => m.ArticleBody)</span>
+                                @Html.TextAreaFor(m => m.ArticleBody, new { @class = "full-width form-control hidden", id = "ArticleBody" })
+                                <div class="summernote"></div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.IsReleaseBroadcastFeed)
+                                @Html.CheckBoxFor(m => m.IsReleaseBroadcastFeed, new { @class = "form-check", id = "IsBroadcast" })
+                            </div>
+                            <input type="button" value="发布Article" class="btn btn-primary btn-block full-width" onclick="submitForm()" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section styles
+{
+    <link type="text/css" href="/Content/summernote.css" rel="Stylesheet" />
+    <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css">
+}
+<script src="/Scripts/summernote.min.js"></script>
+<script>
+    $(function () {
+        $('.summernote').summernote({
+            toolbar: [
+              ['fontsize', ["fontsize"]],
+              ['style', ["color", "bold", "italic", "underline", "strikethrough", "clear"]],
+              ['layout', ["ul", "ol", "paragraph"]],
+              ['insert', ["picture", "link", "table", "hr"]],
+              ['misc', ["fullscreen", "codeview", "undo", "redo", "help"]]
+            ],
+            height: 200,
+            minHeight: 200
+        });
+        $('.summernote').code(HTMLDecode('@Model.ArticleBody'));
+    });
+
+    function submitForm() {
+        //取值
+        var sHTML = $('.summernote').code();
+        $("#ArticleBody").val(sHTML);
+        $("#releaseArticle").submit();
+        //window.open("/Editor/Article/@Model.Id");
+    }
+</script>

@@ -1,0 +1,20 @@
+﻿@{
+    Layout = "~/Views/Shared/_Master.cshtml";
+}
+
+<div class="list-group">
+    <a href="/content/mobile/android/latest/citygee.apk" target="_blank" class="list-group-item">
+        <h3 class="list-group-item-heading"><img src="~/Content/Images/components/android.png" class="ico-md"/>安卓客户端（测试版）</h3>
+        <p class="list-group-item-text">
+            点击下载<span class="glyphicon glyphicon-download-alt"></span>
+        </p>
+    </a>
+</div>
+
+<script>
+    $(function () {
+        if (is_weixin()) {
+            $(".bottom-fixed").show();
+        }
+    });
+</script>

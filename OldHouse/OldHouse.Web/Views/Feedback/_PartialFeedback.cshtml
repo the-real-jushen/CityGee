@@ -1,0 +1,46 @@
+﻿@using OldHouse.Web.Models
+@model List<OldHouse.Web.Models.FeedBackDto>
+
+<div id="pageContent2">
+    <ul class="media-list">
+        @foreach (var feedback in Model)
+        {
+            <li class="media @feedback.Id" style="border-bottom:solid 1px #808080;">
+                @if (!feedback.UserId.Equals(new Guid()))
+                {
+                    <div class="media-left">
+                        <div class="text-center" style="position:relative;">
+                            <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @feedback.UserId.ToString() })">
+                                <img class="avatar-img media-object" src="/Content/Images/avatar/@feedback.UserAvatar" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                                <h5>@feedback.NickName</h5>
+                            </a>
+                        </div>
+                    </div>
+                }
+                <div class="media-body" style="position:relative;padding-right:30px;">
+                    <p>问题描述：@feedback.Content</p>
+                    <p>提交位置：<a target="_blank" href="@feedback.CreatedUrl">@feedback.CreatedUrl</a></p>
+                    <p>提交时间：@feedback.CreatedTime.ToLocalTime().ToString()</p>
+                    <p>邮箱：
+                    @if (@feedback.UserName.Contains("Anonymous"))
+                    {
+                        @feedback.UserName
+                    }
+                    else
+                    {
+                        <a href="mailto:@(feedback.UserName)">@feedback.UserName</a>
+                    }
+                    </p>
+                    <span class="glyphicon glyphicon-trash click" style="position:absolute;right:0;font-size:15px;" onclick="deleteFeedBack('@feedback.Id','@ViewBag.UserClient')"></span>
+                </div>
+            </li>
+        }
+    </ul>
+
+    @if (ViewBag.PageControl != null)
+    {
+        ViewBag.PageControl.UseAjax = true;
+        ViewBag.PageControl.PageContentId = "pageContent2";
+        @Html.Partial("_PartialPaging", (PageControl)ViewBag.PageControl)
+    }
+</div>

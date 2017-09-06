@@ -1,0 +1,161 @@
+﻿body, h1, h2, h3{
+   padding-top:0px;
+   margin-top: 0px;
+    
+    font-family:"Helvetica Neue", Helvetica, Arial, "微软雅黑", 
+             STXihei, "华文细黑", 
+             serif;
+    line-height: 135%;
+}
+
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+
+.house-card:hover {
+    box-shadow: 2px 2px 2px 2px #cecece;
+}
+
+.house-card {
+    margin: 8px;
+}
+
+.house-card a img {
+    margin-top:0px;
+    margin-left:0px;
+    margin-right: 0px;
+}
+
+a {
+    text-decoration: none!important;
+    color: #333 !important;
+}
+
+article {
+    line-height: 200% ;
+}
+
+.detail-section {
+    background-color: #efefef;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 3px 3px 5px 2px grey;
+}
+
+.housDetail-fix {
+    height: 40px;
+}
+
+.detail-content {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.navbar    a {
+    color: #efefef !important;
+}
+
+.banner {
+    background-color:#1f1f1f;
+    top: 0;
+    margin-top: 0;
+    color: #efefef !important;
+    padding: 0 !important;
+    font-size: large;
+}
+
+.banner a {
+    color: #efefef !important;
+}
+
+.banner h1 h2 h3 {
+    display: inline !important;
+}
+
+#topnavbar {
+    margin: 0;
+}
+#topnavbar.affix {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.avatar-img {
+    border-radius: 50% !important;
+    border-style: solid !important;
+    border-width: thick !important;
+    border-color: #ffffff !important;
+    margin: 4% !important;
+    height: 128px;
+    width: 128px;
+}
+
+.user-brief-avatar {
+    height: 64px;
+    width: 64px;
+}
+
+.center {
+     margin-left: auto;
+     margin-right:  auto;
+}
+
+.full-width {
+    width:100% !important;
+     max-width:100% !important;
+}
+
+.checkin-thumb {
+    height: 70px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+.gf-2x {
+    font-size: 2em;
+}
+
+.gf-3x {
+    font-size: 3em;
+}
+
+hr.solid-line {
+    border-color: #000;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+hr.solid-line-grey {
+    border-color: #cecece;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+
+.map-section {
+    width:100%; 
+    height: 23vw; 
+    min-height:240px;
+    margin-bottom: 20px;
+}
+
+.center-cropped {
+  overflow:hidden;
+}
+.center-cropped img {
+  min-width: 100%;
+  left: 50%;
+  position: relative;
+  transform: translateX(-50%);
+}

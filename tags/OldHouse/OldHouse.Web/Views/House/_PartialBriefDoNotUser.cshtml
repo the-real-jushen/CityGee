@@ -1,0 +1,22 @@
+﻿@model OldHouse.Web.Models.HouseBrief
+           
+
+    @{
+        var id = Model.Id.ToString();
+        <a href="@Url.RouteUrl("houseDetail", new { id })">
+            <div class="col-xs-4" >
+                <img class="img-responsive img-rounded"  src="~/Content/Images/house/@Model.CodeName/@Model.Cover" alt="@Model.Name" />
+                </div>
+                <div class="col-xs-8">
+                    <p class="lead">@Model.Name</p>
+                    <p>建造时间: @Model.BuiltYear.Year</p>
+
+                    <p>
+                        @Model.Abstarct
+                    </p>
+                    <div>
+                        地点：@Model.LocationString
+                    </div>  
+                </div>
+        </a>
+    }

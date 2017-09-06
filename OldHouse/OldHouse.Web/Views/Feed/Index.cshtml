@@ -1,0 +1,75 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using OldHouse.Web.Models
+
+<div class="clearfix housdetial-fix"></div>
+<div id="content">
+    
+</div>
+<div id="loading-more" class="container"></div>
+
+@if (ViewBag.PageControl.LastPage > 1)
+{
+    ViewBag.PageControl.AutoPaging = true;
+    @Html.Partial("_PartialPaging", (PageControl)ViewBag.PageControl)
+}
+
+@section scripts
+{
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+
+    $(function () {
+        wall = new Freewall("#content");
+        wall.reset({
+            selector: '.card',
+            animate: true,
+            cellW: 250,
+            cellH: 'auto',
+            onResize: function () {
+                wall.fitWidth();
+            }
+        });
+
+        var query = "?page=@(ViewBag.PageControl.CurrentPage)&pagesize=@(ViewBag.PageControl.PageSize)";
+        var route = "/Feed/All";
+        $("#content").data("route", route);
+        $("#content").data("currentPage", "@(ViewBag.PageControl.CurrentPage)");
+        $("#content").data("lastPage", "@(ViewBag.PageControl.LastPage)");
+        $("#content").data("pageSize", "@(ViewBag.PageControl.PageSize)");
+        appendBlock(route + query);
+
+        $("#checkboxInput").prop("checked", true);
+        $(window).scroll(function () {
+            var a = $(this).scrollTop();
+            var b = $(this).height();
+            var c = $(document).height();
+            var nextPage = parseInt($("#content").data("currentPage")) + 1;
+            var lastPage = parseInt($("#content").data("lastPage"));
+            if (a + b == c && $("#checkboxInput").is(":checked") && (nextPage <= lastPage)) {
+                $("#content").data("currentPage", nextPage);
+                var query = "?page=" + $("#content").data("currentPage") + "&pagesize=" + $("#content").data("pageSize");
+                var route = $("#content").data("route");
+                appendBlock(route + query);
+                if (nextPage == lastPage) {
+                    alertModal("没有更多了");
+                }
+            }
+        });
+    });
+    function appendBlock(url) {
+        $('#loading-more').load("/home/loadingmore");
+        $.get(url, function (data) {
+            var cards = $(data).filter("div.card");
+            wall.appendBlock(cards);
+            wall.fitWidth();
+            wall.container.find('.card img').load(function () {
+                wall.fitWidth();
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            setTimeout(function () { setTimeout(function () { $('#loading-more').empty(); }, 1000); }, 1000);
+        });
+    }
+    </script>
+}

@@ -1,0 +1,109 @@
+﻿@using OldHouse.Web.Controllers
+@using OldHouse.Web.Models
+@model IEnumerable<OldHouse.Web.Models.CheckInDto>
+
+<div id="pageContent1">
+    <ul class="media-list">
+        @foreach (var checkin in Model)
+        {
+            <li class="media @checkin.UserId" style="border-bottom:solid 1px #808080;">
+                <div class="media-left">
+                    <div class="text-center" style="position:relative;">
+                        <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @checkin.UserId.ToString() })">
+                            <img class="avatar-img media-object" src="/Content/Images/avatar/@checkin.UserAvatar" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                            <h5>@checkin.UserNickName</h5>
+                        </a>
+                        @if (ViewBag.User == null || !ViewBag.User.Id.Equals(checkin.UserId))
+                        {
+                            <div style="position:absolute;bottom:20px;right:0;">
+                                @Html.Action("FollowMe", "Follow", new { area = "", id = checkin.UserId })
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="media-body">
+                    <div style="position:relative;padding-bottom:30px;padding-top:20px;min-height:120px;">
+                        <div class="bubble">
+                            <div class="bubble-item">
+                                <span class="triangle"></span>
+                                <div class="article">
+                                    <a href="@Url.RouteUrl("CheckinDetail", new {id = checkin.Id})">
+                                        <p>
+                                            <img src="~/Content/Images/components/Approve.png" class="essence @(checkin.IsEssence ? "" : "hidden")" style="width:20px;" />@checkin.Content
+                                        </p>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            @for (int i = 0; i < checkin.Images.Count(); i++)
+                            {
+
+                                if (i == 5 && i != checkin.Images.Count())
+                                {
+                                    <a href="@Url.RouteUrl("CheckinDetail",new {id=checkin.Id})">
+                                        <i class="glyphicon glyphicon-option-horizontal gf-2x hidden-xs"></i>
+                                    </a>
+                                    break;
+                                }
+                                //you dont have Jqeury loaded when this partial is loaded, so you have to use plain JS to register event
+                                <a class="imgClick" href="#imgModal" data-toggle="modal" data-img-url="@checkin.Images[i]" onclick="$('#imgModal img').attr('src', $(this).attr('data-img-url'));">
+                                    <img class="checkin-thumb @(i < 2 ? "" : "hidden-xs")" src="@checkin.Images[i]" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'" />
+                                </a>
+
+                            }
+                            @if (checkin.Images.Count() > 2)
+                            {
+                                <a href="@Url.RouteUrl("CheckinDetail",new {id=checkin.Id})">
+                                    <span class="visible-xs-inline glyphicon glyphicon-option-horizontal gf-2x"></span>
+                                </a>
+                            }
+                        </div>
+                        <div style="position:absolute;bottom:0;right:0;">
+                            @if (ViewBag.User != null && ViewBag.User.IsEditor)
+                            {
+                                <div class="approve click" title="精华" data-toggle="tooltip" data-placement="top" onclick="toggleEssence(this, '@checkin.Id','@ViewBag.UserClient')">
+                                    <span class="approve glyphicon @(checkin.IsEssence ? "glyphicon-star" : "glyphicon-star-empty")"></span>
+                                </div>
+                            }
+                            @Html.Action("LikeMe", "LikeRateFav", new { area = "", id = checkin.Id })
+                        </div>
+                        <div style="position:absolute;top:0;right:0;padding-bottom:10px;font-size:12px;">@checkin.ModifyTime</div>
+                    </div>
+                </div>
+            </li>
+        }
+        </ul>
+
+    @if (ViewBag.PageControl.LastPage > 1)
+    {
+        ViewBag.PageControl.UseAjax = true;
+        ViewBag.PageControl.PageContentId = "pageContent1";
+        @Html.Partial("_PartialPaging", (PageControl)ViewBag.PageControl)
+    }
+</div>
+
+<script>
+    $(function () {
+        $(".imgClick").on("click", function (e) {
+            $('#imgModal img').attr('src', $(this).attr('data-img-url'));
+        });
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

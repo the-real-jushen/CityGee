@@ -1,0 +1,167 @@
+﻿@model OldHouse.Web.Models.CheckInDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "我要签到--"+Model.HouseName;
+}
+
+
+
+<div class="clearfix housdetial-fix"></div>
+
+<div class="container container-responsive">
+    <div class="col-sm-10 col-sm-offset-1">
+        <div class="row">
+            <div id="loading-img" class="container center"></div>
+        </div>
+
+        <div class="row">
+            @using (Html.BeginForm("checkin", "Checkin", FormMethod.Post, new {id = "CheckinForm"}))
+            {
+                @Html.ValidationSummary(false, "", new { @class = "error" })
+                @Html.HiddenFor(m => m.Titile)
+                @Html.HiddenFor(m => m.TargetId)
+                @Html.HiddenFor(m => m.Distance)
+
+                <input type="text" name="Lnt" class="hidden" id="lnt" value="0"/>
+                <input type="text" name="Lat" class="hidden" id="lat" value="0"/>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>到过这里，说点什么</h3>
+                        <hr class="solid-line-white"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="Content">上传照片</label>
+                            <div id="img-upload" class="dropzone">
+                                <div id="img-add" class="dz-image-preview dz-preview">
+                                    <div class="dz-image">
+                                        <span class="glyphicon glyphicon-plus" style="font-size: 50px; padding: 30px;"></span>
+                                    </div>
+                                </div>
+                                @if (@Model.Images != null)
+                                {
+                                    foreach (var image in @Model.Images)
+                                    {
+                                        @Html.Partial("_PartialImageThumb", image)
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="Content">说点什么吧~</label>
+                            <textarea class="full-width form-control" id="Content" rows="7" name="Content" placeholder="讲个关于这里的故事：或是你的故事，与你此刻的心情"></textarea>
+                        </div>
+                        <input type="submit" value="我来过这里" class="btn btn-primary"/>
+                        <a href="@Url.RouteUrl("houseDetail", new { id = @Model.TargetId, dis = @Model.Distance })">
+                            <input type="button" value="直接返回" class="btn btn-default" />
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="map">我当前的位置（可点击地图校正）</label>
+                        <div id="map" class="map-section">
+                            <div id="map-container"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+<div id="hidden_for_app" class="hidden">
+    <div class="dz-preview dz-processing dz-success dz-complete dz-image-preview">
+        <div class="dz-image">
+            <img data-dz-thumbnail="" src="" style="width: 120px; height: 120px;">
+        </div>
+        <a data-dz-remove="" href="javascript:undefined;" class="dz-remove" onclick=" deleteParent(this) ">删除</a>
+        <input type="text" value="" class="hidden" name="Images[]">
+    </div>
+</div>
+
+
+@section styles
+{
+    <link type="text/css" href="/Content/dropzone.css" rel="Stylesheet" />
+}
+
+@section scripts
+{
+    <script src="/Scripts/dropzone.js"></script>
+    <script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp&key=4QCBZ-SWRH5-JC5I6-QQ6WW-GZWG6-6WF5K"></script>
+    <script>
+        $(function () {
+
+            //setup file upload
+            Dropzone.autoDiscover = false;
+            $("#img-upload").dropzone(
+            {
+                url: "/api/content/UploadHouseImage",
+                paramName: "Images", // The name that will be used to transfer the file
+                maxFilesize: 10, // MB
+                maxFiles: 10, //how many files this Dropzone handles
+                uploadMultiple: false,
+                addRemoveLinks: true,
+                acceptedFiles: ".jpeg, image/jpeg,image/png,image/gif,image/bmp",
+                dictRemoveFile: "删除",
+                dictFallbackMessage: "请使用Chrome 7+、Firefox 4+、IE 10+、Opera 12+、Safari 6+获得更好体验",
+                dictDefaultMessage: "",
+                dictFileTooBig: "图片太大({{filesize}}MiB)，请限制在{{maxFilesize}}MiB以下。",
+                dictInvalidFileType: "支持图片格式：jpg,jpeg,png,gif,bmp",
+                dictResponseError: "未知错误：{{statusCode}}",
+                dictCancelUpload: "取消上传",
+                dictCancelUploadConfirmation: "确定取消上传此图片？",
+                dictRemoveFileConfirmation: "确定删除此图片？",
+                dictMaxFilesExceeded: "上传图片不能超过10张。",
+                clickable: "#img-add"
+            });
+
+            //show map
+            var map = new qq.maps.Map(document.getElementById("map-container"), {
+                mapTypeControl: false,
+                zoom: 13
+            });
+            var marker = new qq.maps.Marker({
+                map: map
+            });
+
+            var customZoomDiv = document.createElement("div");
+            customZoomDiv.style.cssText = "padding:5px;border:2px solid #86acf2;background:#ffffff;";
+            customZoomDiv.index = 1; //设置在当前布局中的位置
+            map.controls[qq.maps.ControlPosition.TOP_RIGHT].push(customZoomDiv);
+
+            qq.maps.event.addListener(map, 'click', function (event) {
+                marker.setPosition(event.latLng);
+                geocoder.getAddress(event.latLng);
+            });
+
+            var geocoder = new qq.maps.Geocoder({
+                complete: function (result) {
+                    customZoomDiv.innerHTML = result.detail.address;
+                    $('#lnt').val(result.detail.location.lng);
+                    $('#lat').val(result.detail.location.lat);
+                }
+            });
+
+            function distInitialise(point) {
+                position = new qq.maps.LatLng(point.coords.latitude, point.coords.longitude);
+                console.log(position);
+                geocoder.getAddress(position);
+                marker.setPosition(position);
+                map.panTo(position);
+            }
+
+            getLocation(distInitialise);
+            
+        });
+
+
+        function AndroidAppUpdateThumb(path) {
+            $("#hidden_for_app").find("img").attr("src", path);
+            $("#hidden_for_app").find("input").attr("value", path);
+            $("#img-upload").append($("#hidden_for_app").children().clone());
+        }
+    </script>
+}

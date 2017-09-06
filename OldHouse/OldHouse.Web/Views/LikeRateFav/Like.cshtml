@@ -1,0 +1,115 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using OldHouse.Web.Models
+
+@Html.Partial("_PartialSideNavigation", (object)@ViewBag.Visitor)
+
+@if (ViewBag.UserClient == "Browser")
+{
+    <div class="row tabs">
+        <div class="col-xs-6 text-center tab-item">
+            <a href="javascript:void(0);" id="houses">赞过的城迹-@ViewBag.LikedHouseCount</a>
+        </div>
+        <div class="col-xs-6 text-center tab-item">
+            <a href="javascript:void(0);" id="checkins">赞过的签到-@ViewBag.LikedCheckinCount</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="clearfix housDetail-fix"></div>
+}
+
+<div id="content">
+
+</div>
+<div id="loading-more" class="container"></div>
+
+@if (ViewBag.PageControl.LastPage > 1)
+{
+    ViewBag.PageControl.AutoPaging = true;
+    @Html.Partial("_PartialPaging", (PageControl)ViewBag.PageControl)
+}
+
+@section scripts
+{
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+
+    $(function () {
+        $(".tab-item a").click(function () {
+            if (!$(this).hasClass("active"))
+            {
+                $(this).toggleClass("active");
+                switch ($(this).attr("id"))
+                {
+                    case "houses":
+                        location.href = location.href.replace("checkins","houses");
+                        break;
+                    case "checkins":
+                        location.href = location.href.replace("houses", "checkins");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+        wall = new Freewall("#content");
+        wall.reset({
+            selector: '.card',
+            animate: true,
+            cellW: 250,
+            cellH: 'auto',
+            onResize: function () {
+                wall.fitWidth();
+            }
+        });
+        var type = location.href.substring(location.href.indexOf("/MyLiked/") + 9, location.href.lastIndexOf("/"));
+        var userId = "@ViewBag.Visitor.Id";
+        console.log(type);
+        $("#" + type).addClass("active");
+        var query = "?page=@(ViewBag.PageControl.CurrentPage)&pagesize=@(ViewBag.PageControl.PageSize)";
+        var route = "/LikeRateFav/UserLiked" + type + "/" + userId;
+        $("#content").data("route", route);
+        $("#content").data("currentPage", "@(ViewBag.PageControl.CurrentPage)");
+        $("#content").data("lastPage", "@(ViewBag.PageControl.LastPage)");
+        $("#content").data("pageSize", "@(ViewBag.PageControl.PageSize)");
+        appendBlock(route + query);
+
+        $("#checkboxInput").prop("checked", true);
+        $(window).scroll(function () {
+            var a = $(this).scrollTop();
+            var b = $(this).height();
+            var c = $(document).height();
+            var nextPage = parseInt($("#content").data("currentPage")) + 1;
+            var lastPage = parseInt($("#content").data("lastPage"));
+            if (a + b == c && $("#checkboxInput").is(":checked") && (nextPage <= lastPage)) {
+                $("#content").data("currentPage", nextPage);
+                var query = "?page=" + $("#content").data("currentPage") + "&pagesize=" + $("#content").data("pageSize");
+                var route = $("#content").data("route");
+                appendBlock(route + query);
+                if (nextPage == lastPage) {
+                    alertModal("没有更多了");
+                }
+            }
+        });
+    });
+    function appendBlock(url) {
+        $('#loading-more').load("/home/loadingmore");
+        $.get(url, function (data) {
+            var cards = $(data).filter("div.card");
+            wall.appendBlock(cards);
+            wall.container.find('.card img').load(function () {
+                wall.fitWidth();
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            $(".imgClick").on("click", function (e) {
+                $('#imgModal img').attr('src', $(this).attr('data-img-url'));
+            });
+            setTimeout(function () { $('#loading-more').empty(); }, 1000);
+        });
+    }
+    </script>
+}

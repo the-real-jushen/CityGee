@@ -1,0 +1,13 @@
+﻿@model List<OldHouse.Web.Models.ArticleBrief>
+
+@{
+    foreach (var article in Model)
+    {
+        <div class="list-group">
+            <a href="@Url.RouteUrl("Editor_default", new { area = "", action = "Article", id = @article.Id })" class="list-group-item">
+                <h3 class="list-group-item-heading">@article.Title</h3>
+                <p class="list-group-item-text">@article.AuthorName 于 @article.CreatedTime.ToLocalTime() 创建</p>
+            </a>
+        </div>
+    }
+}

@@ -1,0 +1,34 @@
+﻿@model OldHouse.Web.Models.RegisterViewModel
+
+@using (Html.BeginForm("Register", "Account", new { area = "", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false,"",new { @class = "error"})
+
+    @Html.LabelFor(m => m.UserName, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.UserName, new { @class = "form-input email" })
+
+    @Html.LabelFor(m => m.NickName, new { @class = "form-label" })
+    @Html.TextBoxFor(m => m.NickName, new { @class = "form-input" })
+
+    <label class="form-label">请选择性别</label>
+    <div class="click">
+        <input value="male" checked="checked" name="sex" type="radio" class="form-radio"><span onclick="radioMe(this)">男生</span>
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    </div>
+    <div class="click">
+        <input value="female" name="sex" type="radio" class="form-radio"><span onclick="radioMe(this)">女生</span>
+    </div>
+
+    @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+    @Html.PasswordFor(m => m.Password, new { @class = "form-input" })
+
+    @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
+    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-input" })
+
+    <input type="submit" value="注册" class="form-button" />
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

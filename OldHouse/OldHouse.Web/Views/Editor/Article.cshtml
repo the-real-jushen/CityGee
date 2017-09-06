@@ -1,0 +1,84 @@
+﻿@model OldHouse.Web.Models.ArticleDetail
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "城迹新闻--" + Model.Title;
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container container-responsive">
+    <div class="detail-section">
+        <div class="detail-content">
+            <div class="row">
+                <div class="col-sm-12">
+                    <h1>
+                        @Model.Title
+                        <a href="@Url.RouteUrl("Editor_default", new { area = "", action = "ArticleList" })" class="pull-right" style="font-size:15px;">
+                            查看更多<span class="glyphicon glyphicon-arrow-right"></span>
+                        </a>
+                    </h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-8">
+                    By:
+                    <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @Model.AuthorId.ToString() })" style="color: #0094ff !important;">
+                        <span class="one-line" style="width:100px;">@Model.AuthorNickNmae</span>
+                    </a>
+                    <br />
+                    Created:@Model.CreatedTime.ToLocalTime().ToString()
+                </div>
+                <div class="col-xs-4">
+                    <div class="pull-right">
+                        @Html.Action("LikeMe", "LikeRateFav", new { area = "", id = @Model.Id })
+                        @if (ViewBag.ShowEdit)
+                        {
+                            <div class="click" title="编辑" data-toggle="tooltip" data-placement="top">
+                                <a href=@Url.RouteUrl("Editor_default", new { area = "", action = "EditArticle", id = Model.Id })>
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <hr class="solid-line-grey" />
+        </div>
+
+        <div class="detail-content">
+            <div class="summernote full-width" id="ArticleBody"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="urlQRCode">
+    <div class="item">
+        <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+        <label class="text-justify" for="url">手机请扫描访问本页</label>
+    </div>
+</script>
+
+@section scripts
+{
+    <script>
+
+    $(function () {
+        $("#ArticleBody").html(HTMLDecode('@Model.Body'));
+        $("#ArticleBody").find("img").addClass("full-width");
+        //QRCode
+        $(".side-fixed .qrCode").append($("#urlQRCode").html());
+        amplify.request({
+            resourceId: 'QRCode',
+            data: {
+                "url": location.href,
+            },
+            success: function(data){
+                $("#url").attr("src", "data:img/png;base64," + data);
+            }
+        });
+        if(is_weixin())
+        {
+            $('#shareInWeixin').slideDown("slow");
+        }
+    });
+    </script>
+}

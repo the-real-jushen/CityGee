@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/business")
+</head>
+<body>
+    <div id="shareInWeixin" style="display:none;">
+        <img src="~/Content/Images/components/weixinFriends.png" />
+        <div class="description">
+            您可以点击右上角选择<br />
+            <b>分享到朋友圈</b>&nbsp;或&nbsp;<b>发送给朋友</b>
+        </div>
+        <span class="glyphicon glyphicon-hand-up"></span>
+    </div>
+    <div class="jumbotron">
+        <div class="container">
+            <h2 class="title">
+                <a href="/Home/Index">
+                    <img src="~/Content/Images/components/sitelogo_orange.png" />
+                </a>
+                @ViewBag.Title
+            </h2>
+            @RenderBody()
+        </div>
+    </div>
+    @if (ViewBag.UserClient == "Browser")
+    {
+        @Html.Partial("_PartialFooter")
+    }
+    
+    <div class="side-fixed visible-lg">
+        <div class="operation">
+            <span class="glyphicon glyphicon-qrcode show-qrCode"></span>
+            <div id="otherOperation"></div>
+        </div>
+        <div class="qrCode">
+            <div class="item">
+                <img class="img-responsive" id="weixin" src="/Content/Images/components/qrWeiXin.jpg" />
+                <label class="text-justify" for="weixin">微信扫描关注公众号</label>
+            </div>
+        </div>
+    </div>
+    <div class="right-bottom-fixed">
+        <a href="@Url.RouteUrl("HouseDiscover", new { id = "" })" class="add-operation visible-sm visible-xs" title="分享你的城迹" data-toggle="tooltip" data-placement="top">
+            <img src="/Content/Images/components/camera_orange.png" class="ico center-block" />
+        </a>
+        <span class="glyphicon glyphicon-triangle-top click go-top" title="返回顶部" data-toggle="tooltip" data-placement="top"></span>
+    </div>
+    <div class="bottom-fixed" style="display:none;">
+        <span class="glyphicon glyphicon-remove close-bottom"></span>
+        <p>微信内置浏览器不支持下载<br/>请在浏览器中打开此页面后点击下载</p>
+    </div>
+    <script type="text/html" id="urlQRCode">
+        <div class="item">
+            <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+            <label class="text-justify" for="url">手机请扫描访问本页</label>
+        </div>
+    </script>
+
+    <script>
+        $(function () {
+            var information = "@ViewBag.Information";
+            if (information) {
+                alertModal(information);
+            }
+
+            if (is_weixin()) {
+                $("#isweixin").show();
+                $("#isweixin").siblings().hide();
+                $("img.avatar-img").addClass("weixin");
+                $('#shareInWeixin').slideDown("slow");
+            }
+
+            $(".side-fixed .qrCode").append($("#urlQRCode").html());
+            amplify.request({
+                resourceId: 'QRCode',
+                data: {
+                    "url": location.href,
+                },
+                success: function (data) {
+                    $("#url").attr("src", "data:img/png;base64," + data);
+                }
+            });
+        });
+
+        $(".show-qrCode").hover(function () {
+            $(".qrCode").fadeIn("slow");
+        }, function () {
+            $(".qrCode").fadeOut("slow");
+        });
+
+        $(".go-top").bind("click", function (event) {
+            $("html, body").animate({ scrollTop: 0 }, 100);
+        });
+
+        $(".bottom-fixed .close-bottom").bind("click", function (event) {
+            $(".bottom-fixed").fadeOut();
+        });
+    </script>
+</body>
+</html>

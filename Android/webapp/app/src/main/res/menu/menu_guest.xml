@@ -1,0 +1,7 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.citygee.zhengwei.citygee.NormalActivity">
+    <item android:id="@+id/action_login" android:title="@string/title_menu_login"
+        android:orderInCategory="98" app:showAsAction="never" />
+</menu>

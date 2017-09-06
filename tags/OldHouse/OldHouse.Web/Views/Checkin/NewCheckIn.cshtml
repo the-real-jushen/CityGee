@@ -1,0 +1,132 @@
+﻿@model OldHouse.Web.Models.CheckInDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "我要签到--"+Model.HouseName;
+}
+
+
+
+<div class="clearfix housdetial-fix"></div>
+
+<div class="container">
+    <div class="col-sm-10 col-sm-offset-1">
+        <div class="row">
+            <div id="loading-img" class="container center"></div>
+        </div>
+
+        <div class="row">
+            @using (Html.BeginForm("checkin", "Checkin", FormMethod.Post, new {id = "CheckinForm"}))
+            {
+                @Html.ValidationSummary()
+                ;
+                @Html.HiddenFor(m => m.Titile)
+                ;
+                @Html.HiddenFor(m => m.TargetId)
+                ;
+
+
+                @Html.HiddenFor(m => m.Distance)
+                ;
+                <legend class="">新的签到</legend>
+                <input type="text" name="Lnt" class="hidden" id="lnt" value="0"/>
+                <input type="text" name="Lat" class="hidden" id="lat" value="0"/>
+                <div class="row">
+                    <div class="col-sm-7">
+                        <div class="form-group">
+                            <label for="Content">上传照片</label>
+                            <input id="img-upload" type="file" multiple=true>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <label for="Content">说点什么吧~</label>
+                            <textarea class="full-width form-control" id="Content" rows="14" cols="100" name="Content" placeholder="说说你对这个景点的感受，分享你现在的心情！" style="width: 960px;"></textarea>
+                        </div>
+                        <input type="submit" value="我要签到" class="btn btn-primary btn-block full-width"/>
+                    </div>
+
+                </div>
+
+            }
+        </div>
+
+
+        <div class="row">
+            <label for="map">我当前的位置，如果跑偏了，请单击下面的地图修改。</label>
+            <div id="map" class="map-section col-sm-12">
+                <div id="map-container" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>  
+    </div>
+    
+</div>
+
+@section styles
+{
+    @Styles.Render("~/Content/css/fileupload")
+}
+
+
+
+@section scripts
+{
+
+    @Scripts.Render("~/bundles/fileupload")
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=be63fdc2356aafa8716a2619a3dea13f"></script> 
+    <script>
+        var map;
+        var marker;
+        function mapClicked(e) {
+            
+            
+            marker.setPosition(e.lnglat);
+            
+            $('#lnt').val(e.lnglat.t);
+            $('#lat').val(e.lnglat.A);
+            console.log(e.lnglat.t.toString() + e.lnglat.A.toString());
+        }
+
+        $(function () {
+
+            //setup file upload
+
+            /* Initialize your widget via javascript as follows */
+            $("#img-upload").fileinput({
+                uploadUrl: "/api/content/UploadCheckInImage", // server upload action
+                uploadAsync: true,
+                maxFileCount: 10,
+                maxFileSize: 5900,
+                previewSettings: {
+                    image: { width: "auto", height: "100px" }
+                }
+            });
+
+            $('#img-upload').on('fileuploaded', function(event, data, previewId, index) {
+
+                var response = data.response;
+                $("#CheckinForm").append(
+                    "<input type=\"text\" name=\"Images[]\" class=\"hidden\" value=\"" + data.response.UploadedFileUrls[0] + "\" />"
+                );
+            });
+
+
+            //get location updata the imput and show the map
+
+            getLocation(function(position) {
+                $('#lnt').val(position.coords.longitude);
+                $('#lat').val(position.coords.latitude);
+                showMapWithPin("map-container", position, function(mapObj,markerObj) {
+                    map = mapObj;
+                    marker = markerObj;
+                    AMap.event.addListener(map, "click", mapClicked);
+                });
+            });
+
+            
+        });
+
+
+    </script>
+}
+

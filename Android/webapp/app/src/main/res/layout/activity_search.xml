@@ -1,0 +1,41 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.citygee.zhengwei.citygee.SearchActivity"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="6dp">
+        <EditText
+            android:layout_weight="10"
+            android:layout_width="0dp"
+            android:layout_height="?android:attr/listPreferredItemHeightSmall"
+            android:hint="@string/hint_search"
+            android:id="@+id/text_box_search"
+            style="@style/CityGeeEditText"/>
+        <ImageButton
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_action_search"
+            android:layout_width="0dp"
+            android:layout_margin="0dp"
+            android:layout_height="?android:attr/listPreferredItemHeightSmall"
+            android:layout_weight="3"
+            android:id="@+id/action_do_search"
+            style="@style/CityGeeButtons"
+            />
+
+
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_search_keywords"
+        style="@style/CityGeeEditText"
+        android:layout_margin="6dp">
+    </ListView>
+
+</LinearLayout>

@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "我附近的老房子";
+}
+@using OldHouse.Web.Models
+@model System.Collections.Generic.IEnumerable<OldHouse.Web.Models.HouseBrief>
+
+<div id="loading-img"class="container"></div>
+
+<div id="content">
+
+</div>
+<div class="container">
+    <div class="row center">
+        @if (ViewBag.PageControl != null)
+        {
+            @Html.Partial("_PartialPaging", (PageControl)ViewBag.PageControl)
+        }
+    </div>
+</div>
+
+
+
+
+@section scripts
+{
+    <script>
+    //$(function() {
+    //    getLocation();
+    //});
+
+    //function getLocation() {
+    //    if (navigator.geolocation) {
+    //        navigator.geolocation.getCurrentPosition(redirectPosition);
+    //    } else {
+    //        $('#content').load(
+    //            "/house/realnear/0/0/1");
+    //    }
+
+    //}
+
+    //$(function() {
+    //    getLocation();
+    //});
+
+    $(function () {
+        getLocation(redirectPosition);
+    });
+
+    function redirectPosition(position) {
+        $('#content').load(
+            "/house/realnear/" + position.coords.longitude + "/" + position.coords.latitude  +"@Html.Raw((ViewBag.PageControl == null ? "" : ("?page=" + ViewBag.PageControl.CurrentPage + "&pagesize=" + ViewBag.PageControl.PageSize)))"
+            );
+        }
+    </script>
+
+}
+
+
+

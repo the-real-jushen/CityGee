@@ -1,0 +1,64 @@
+<resources>
+    //ui staff
+    <string name="app_name">CityGee</string>
+    <string name="title_activity_main">城迹</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="title_menu_profile">我</string>
+    <string name="title_menu_login">登录</string>
+    <string name="title_menu_logout">退出登录</string>
+    <string name="title_menu_feedback">我有话要说</string>
+    <string name="title_menu_main">城迹</string>
+    <string name="hint_search">请输入关键字</string>
+    <string name="title_menu_search">城迹</string>
+    //settings
+    <string name="pref_name_default">PrefDefault</string>
+    <string name="pref_key_loggedin">IsLoggedIn</string>
+    <string name="pref_key_uid">UserId</string>
+    <string name="pref_key_username">UserName</string>
+    <string name="pref_key_update_date">UpDateDate</string>
+    <string name="pref_key_email">email</string>
+    <string name="pref_key_search_key">SearchKey</string>
+    <string name="pref_key_need_upgrade">NeedUpgrade</string>
+
+    //internal const
+    <string name="intent_start_url">PrefDefault</string>
+    <string name="intent_login_redirect">redirect</string>
+    <string name="intent_not_url">http://testhouse.volq.org/nothing</string>
+    <string name="intent_upload_trigger">upload photo</string>
+    <string name="intent_login_trigger">require log in</string>
+
+    //web
+    <string name="user_agent_string">CityGee WebApp 1.0 (Android)</string>
+    <string name="web_domain_name">testhouse.volq.org</string>
+    <string name="url_web_root">http://testhouse.volq.org</string>
+    <string name="url_login">http://testhouse.volq.org/Account/Login</string>
+    <string name="url_web_news">http://testhouse.volq.org/Feed</string>
+    <string name="url_web_near">http://testhouse.volq.org/House/near</string>
+    <string name="url_web_register">http://testhouse.volq.org/Account/Register</string>
+    <string name="path_web_register">/Account/Register</string>
+    <string name="url_web_upload_house_image">http://testhouse.volq.org/api/content/UploadHouseImage</string>
+    <string name="url_app_version">http://testhouse.volq.org/api/content/androidversion</string>
+    <string name="url_app_download">http://testhouse.volq.org/content/Mobile/Android/Latest/citygee.apk</string>
+    <string name="url_app_appuser">http://testhouse.volq.org/api/account/appuser</string>
+    <string name="url_web_profile">http://testhouse.volq.org/Profile/HomePage</string>
+    <string name="url_web_liked_checkin">http://testhouse.volq.org/User/MyLiked/checkins/</string>
+    <string name="url_web_liked_house">http://testhouse.volq.org/User/MyLiked/houses/</string>
+    <string name="url_web_discover">http://testhouse.volq.org/House/Discover</string>
+    <string name="url_web_new_ckeckin">http://testhouse.volq.org/house/NewCheckin/</string>
+    <string name="url_web_search">http://testhouse.volq.org/House/Near?search=</string>
+    <string name="url_web_feedback">http://testhouse.volq.org/api/feedback</string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_register">欢迎注册</string>
+    <string name="title_activity_base">城迹</string>
+    <string name="title_activity_search">搜索城迹</string>
+    <string name="title_activity_feedback">意见反馈</string>
+
+
+
+</resources>

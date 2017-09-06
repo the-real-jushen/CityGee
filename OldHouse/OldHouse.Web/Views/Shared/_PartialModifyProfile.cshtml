@@ -1,0 +1,55 @@
+﻿@model OldHouse.Web.Models.UserProfileDto
+
+@using (Html.BeginForm("ModifyProfile", "Profile", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false, "", new { @class = "error" })
+
+    <div class="form-group" style="display:none;">
+        @Html.LabelFor(m => m.UserName, new { })
+        @Html.TextBoxFor(m => m.UserName, new { @class = "full-width form-control email" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.NickName, new { })
+        @Html.TextBoxFor(m => m.NickName, new { @class = "full-width form-control" })
+    </div>
+    <div class="form-group">
+        <label>请选择性别</label>
+        <div class="click">
+            @Html.RadioButtonFor(m => m.Sex, "male", new { @class = "form-radio" })<span onclick="radioMe(this)">男生</span>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        </div>
+        <div class="click">
+            @Html.RadioButtonFor(m => m.Sex, "female", new { @class = "form-radio" })<span onclick="radioMe(this)">女生</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="distpicker row">
+            <div class="col-xs-6" style="padding:0;">
+                @Html.LabelFor(m => m.ProfileProvince, new { })
+                <select id="Province" class="form-control" name="ProfileProvince"></select>
+            </div>
+            <div class="col-xs-6" style="padding:0;">
+                @Html.LabelFor(m => m.ProfileCity, new { })
+                <select id="City" class="form-control col-xs-6" name="ProfileCity"></select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group text-center">
+        <button type="submit" class="btn btn-default">保存</button>
+        <button type="button" class="btn btn-default" onclick="javascript:location.reload();">重置</button>
+    </div>
+}
+<script src="/Scripts/distpicker.data.min.js"></script>
+<script src="/Scripts/distpicker.min.js"></script>
+<script>
+    var currentProvince = "@Model.ProfileProvince";
+    var currentCity = "@Model.ProfileCity";
+    console.log(currentProvince);
+    console.log(currentCity);
+    $(".distpicker").distpicker({
+        province: currentProvince,
+        city: currentCity,
+        placeholder: false
+    });
+</script>

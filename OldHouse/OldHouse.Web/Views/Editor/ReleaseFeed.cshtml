@@ -1,0 +1,136 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "发布新鲜事";
+}
+@model OldHouse.Web.Models.ReleaseFeedDto
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container">
+    <div id="content">
+        <div class="card full-width">
+            <div class="header">
+                <b class="title"><span class="glyphicon glyphicon-comment"></span>&nbsp;发布新鲜事</b>
+                <a href="@Url.RouteUrl("Editor_default", new { controller = "Editor", action = "index" })" class="pull-right" style="font-size:15px;">
+                    返回编辑站
+                </a>
+            </div>
+            <div class="content">
+                @using (Html.BeginForm("ReleaseFeed", "Editor", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="col-sm-6" style="padding:10px;">
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.FeedTitle)
+                                <span class="error">(必填)@Html.ValidationMessageFor(m => m.FeedTitle)</span>
+                                @Html.TextBoxFor(m => m.FeedTitle, new { @class = "full-width form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(m => m.FeedText)
+                                <span class="error">(必填)@Html.ValidationMessageFor(m => m.FeedText)</span>
+                                @Html.TextAreaFor(m => m.FeedText, new { @class = "full-width form-control", rows = "2" })
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6" style="padding:0px;">
+                                        @Html.LabelFor(m => m.ReceiverEmail)
+                                        <span class="error">@Html.ValidationMessageFor(m => m.ReceiverEmail)</span>
+                                    </div>
+                                    <div class="col-sm-6" style="padding:0px;">
+                                        <div class="pull-right">
+                                            @Html.LabelFor(m => m.IsBroadcast)
+                                            @Html.CheckBoxFor(m => m.IsBroadcast, new { @class = "form-check", id = "IsBroadcast" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.TextBoxFor(m => m.ReceiverEmail, new { @class = "full-width form-control email", id = "ReceiverEmail" })
+                            </div>
+                        </div>
+                        <div class="col-sm-6" style="padding:10px;">
+                            <div class="form-group">
+                                <label>上传照片</label>
+                                <div id="img-upload" class="dropzone">
+                                    <div id="img-add" class="dz-image-preview dz-preview">
+                                        <div class="dz-image">
+                                            <span class="glyphicon glyphicon-plus" style="font-size: 50px;padding:30px;"></span>
+                                        </div>
+                                    </div>
+                                    @if (@Model.Images != null)
+                                    {
+                                        foreach (var image in @Model.Images)
+                                        {
+                                            @Html.Partial("_PartialImageThumb", image)
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-sm-6" style="padding:0px;">
+                                        @Html.LabelFor(m => m.DestinationLink)
+                                        <span class="error">(必填,#表示为空)@Html.ValidationMessageFor(m => m.DestinationLink)</span>
+                                    </div>
+                                    <div class="col-sm-6" style="padding:0px;">
+                                        <div class="pull-right">
+                                            @Html.LabelFor(m => m.NewBlank)
+                                            @Html.CheckBoxFor(m => m.NewBlank, new { @class = "form-check" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @Html.TextBoxFor(m => m.DestinationLink, new { @class = "full-width form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12" style="padding:10px;">
+                            <input type="submit" value="发布Feed" class="btn btn-primary btn-block full-width" />
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles
+{
+    <link type="text/css" href="/Content/dropzone.css" rel="Stylesheet" />
+}
+
+<script src="/Scripts/dropzone.js"></script>
+<script>
+    //setup file upload
+    Dropzone.autoDiscover = false;
+    $("#img-upload").dropzone(
+    {
+        url: "/api/content/UploadFeedImage",
+        paramName: "Images", // The name that will be used to transfer the file
+        maxFilesize: 10, // MB
+        maxFiles: 1, //how many files this Dropzone handles
+        uploadMultiple: false,
+        addRemoveLinks: true,
+        acceptedFiles: ".jpeg, image/jpeg,image/png,image/gif,image/bmp",
+        dictRemoveFile: "删除",
+        dictFallbackMessage: "请使用Chrome 7+、Firefox 4+、IE 10+、Opera 12+、Safari 6+获得更好体验",
+        dictDefaultMessage: "",
+        dictFileTooBig: "图片太大({{filesize}}MiB)，请限制在{{maxFilesize}}MiB以下。",
+        dictInvalidFileType: "支持图片格式：jpg,jpeg,png,gif,bmp",
+        dictResponseError: "未知错误：{{statusCode}}",
+        dictCancelUpload: "取消上传",
+        dictCancelUploadConfirmation: "确定取消上传此图片？",
+        dictRemoveFileConfirmation: "确定删除此图片？",
+        dictMaxFilesExceeded: "上传图片不能超过1张。",
+        clickable: "#img-add"
+    });
+    $("#IsBroadcast").change(function () {
+        if($(this).is(':checked'))
+        {
+            $("#ReceiverEmail").val("");
+            $("#ReceiverEmail").attr("disabled","disabled");
+        }
+        else
+        {
+            $("#ReceiverEmail").removeAttr("disabled");
+        }
+    });
+</script>

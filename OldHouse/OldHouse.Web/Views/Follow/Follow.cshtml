@@ -1,0 +1,35 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model IEnumerable<OldHouse.Web.Models.UserDisplayDto>
+
+@Html.Partial("_PartialSideNavigation", (object)@ViewBag.Visitor)
+<div class="clearfix housDetail-fix"></div>
+<div id="content">
+    @Html.Partial("_PartialFollowList",Model)
+</div>
+
+@section scripts
+{
+<script src="/Scripts/freewall.js"></script>
+    <script>
+        $(function () {
+            $(".banner-section").slideDown("slow", function () {
+                // Animation complete.
+            });
+            wall = new Freewall("#content");
+            wall.reset({
+                selector: '.card',
+                animate: true,
+                cellW: 150,
+                cellH: 'auto',
+                onResize: function () {
+                    wall.fitWidth();
+                }
+            });
+            wall.container.find('.card img').load(function () {
+                wall.fitWidth();
+            });
+        });
+    </script>
+}

@@ -1,0 +1,29 @@
+﻿@model OldHouse.Web.Models.HouseBrief
+
+
+    @{
+        var id = Model.Id.ToString();
+        <a href="@Url.RouteUrl("houseDetail", new { id, dis = @Model.DistanceInKm })">
+
+            @if (string.IsNullOrEmpty(Model.Cover))
+            {
+                <img class="img-responsive img-rounded" src="~/Content/Images/components/noImage.jpg" alt="@Model.Name" />
+            }
+            else
+            {
+                <img class="img-responsive img-rounded" src="~/Content/Images/house/@Model.CodeName/@Model.Cover" alt="@Model.Name" />
+            }
+            <p class="lead">@Model.Name</p>
+            <p>建造时间: @Model.BuiltYear.Year</p>
+
+            <p>
+                @Model.Abstarct
+            </p>
+            <div>
+                地点：@Model.LocationString
+                <span class="pull-right">距离：<span class="houseDis" data-location="@(Model.Location.coordinates[0] + ";" + Model.Location.coordinates[1])">@Model.DistanceInKm</span> 公里</span>
+            </div>
+
+        </a>
+    }
+

@@ -1,0 +1,219 @@
+﻿@model OldHouse.Web.Models.HouseDetail
+@{
+    Layout =  "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "老房子--"+Model.Name;
+}
+
+
+
+
+@section styles
+{
+    @Styles.Render("~/Content/css/galleryview")
+}
+
+
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container ">
+    <div class="col-sm-8  col-sm-offset-2 detail-section">
+        <div class="row">
+            <div class="col-sm-12 detail-content">
+                @if (@Model.Images.Any())
+                {
+                    <ul id="houseImg" class="galleryView">
+                        @foreach (var image in Model.Images)
+                        {
+                            <li><img src="~/Content/Images/house/@Model.CodeName/@image" alt=""/></li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div style="overflow: hidden; margin-bottom: 15px;">
+                        <img style="width: 100%;" class="img-responsive" src="~/Content/Images/components/noImage.jpg" alt="@Model.Name"/>
+                    </div>
+
+                }
+                <h1>
+                    @Model.Name<a href=@Url.RouteUrl("newCheckin", new {houseId = Model.Id}) class="btn btn-success pull-right">我要签到</a>
+                </h1>
+                <h3>@Model.Abstarct</h3>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-6 detail-content">
+                <ul class="list-unstyled">
+                    <li>
+                        建造年份：<span class="pull-right">@Model.BuiltYear.Year</span>
+                    </li>
+                    <li>
+                        现状：<span class="pull-right">@Model.Condition</span>
+                    </li>
+                    <li>
+                        地点：<span class="pull-right">@Model.LocationString</span>
+                    </li>
+                    <li>
+                        距离：<span class="pull-right"><span class="houseDis" data-location="@(Model.Location.coordinates[0] + ";" + Model.Location.coordinates[1])">@Model.DistanceInKm</span> 公里</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-6 detail-content">
+                @Html.Partial("_PartialTags", Model.Tags)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="map-section col-sm-12">
+                <div id="map-container" style="width: 100%; height: 100%;"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 detail-content">
+                <article>
+                    @Model.Description
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8  col-sm-offset-2 detail-section">
+        <h2>网友签到：<a href=@Url.RouteUrl("newCheckin", new {houseId = Model.Id}) class="btn btn-success pull-right">我要签到</a>
+        </h2>
+        @Html.Action("checkin", "Checkin", new {houseId = Model.Id.ToString(), dis = Model.DistanceInKm, area = "Checkin"})
+    </div>
+
+
+
+</div>
+
+@*image modal*@
+<div id="imgModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="/Content/Images/components/loading.gif" style="width: 100%">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/galleryview")
+
+
+    @*<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>*@
+
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=be63fdc2356aafa8716a2619a3dea13f"></script>    @*you can not use bundle in debug*@
+
+
+
+@*<script>
+    function initQQ() {
+        var map = new qq.maps.Map(document.getElementById("map-container"), {
+            // 地图的中心地理坐标。
+            center: new qq.maps.LatLng(@Model.Location.coordinates[1], @Model.Location.coordinates[0]),
+                zoom: 13
+            });
+    }
+
+
+    function initgaode(){
+        var position=new AMap.LngLat(@Model.Location.coordinates[0], @Model.Location.coordinates[1]);
+            var mapObj=new AMap.Map("map-container",{
+                view: new AMap.View2D({//创建地图二维视口
+                    center:position,//创建中心点坐标
+                    zoom:14, //设置地图缩放级别
+                    rotation:0 //设置地图旋转角度
+                }),
+                lang:"zh_cn"//设置地图语言类型，默认：中文简体
+            });//创建地图实例
+        //put a pin on the thouse
+        var marker = new AMap.Marker({ //创建自定义点标注
+            map:mapObj,
+            position: new AMap.LngLat(@Model.Location.coordinates[0], @Model.Location.coordinates[1]),
+            offset: new AMap.Pixel(-10,-34),
+            icon: "/\Content/\Images/\components/\map_pin-64.png"
+        });    
+    }
+
+</script>*@
+
+
+
+
+
+    <script>
+        
+        $(function() {
+            //set up the gallery
+            var $galleries = $('.galleryView');
+
+            $.each($galleries, function(index, gallery) {
+                gallery.galleryDivParent = $(gallery).parent();
+                $(gallery).galleryView(null, function() {
+                    //set up gallery click                  
+                    $(".gv_panelWrap").css("cursor", "hand").css("cursor", "pointer");
+                    $(".gv_panelWrap").on("click", function () {
+                        $('#imgModal').modal('toggle');
+                        $('#imgModal img').attr('src', $(this).find("img").attr('src'));
+                        
+                    });
+                    
+                });
+            });
+
+            //set up responsive gallery
+            function resizeTheGalleries() {
+                $.each($galleries, function(index, gallery) {
+                    var $galleryParent = gallery.galleryDivParent;
+                    var new_frame_width = $galleryParent.width() * 0.16;
+                    var new_frame_height = $galleryParent.width() * 0.09;
+                    var new_panel_width = $galleryParent.width();
+                    var new_panel_height = new_panel_width * .4;
+                    $(gallery).resizeGalleryView(new_panel_width, new_panel_height, new_frame_width, new_frame_height);
+                });
+            }
+
+            $(window).resize(resizeTheGalleries);
+            resizeTheGalleries();
+            
+            //update the distance in the house brief
+            getLocation(function(point) {
+                var loc=point.coords.longitude+";"+point.coords.latitude;
+                updateDistance("houseDis", loc);
+                console.log(loc);
+            });
+
+
+            //show map
+            showMapWithPin("map-container", {
+                coords: {longitude: @(Model.Location.coordinates[0]),latitude: @(Model.Location.coordinates[1])}
+            });
+
+            
+
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

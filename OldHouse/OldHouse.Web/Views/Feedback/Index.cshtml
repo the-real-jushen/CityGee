@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "用户反馈";
+}
+
+<div class="clearfix housdetial-fix"></div>
+<div class="container container-responsive">
+    <div class="col-md-8  col-md-offset-2 detail-section">
+        <div class="detail-content">
+            @Html.Action("All", "FeedBack", new { area = "" })
+        </div>
+    </div>
+</div>

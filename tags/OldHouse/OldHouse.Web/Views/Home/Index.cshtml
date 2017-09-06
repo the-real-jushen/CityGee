@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "发现老房子";
+}
+
+
+
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-sm-9">
+            <h1>发现老房子的故事</h1>
+            <p class="lead">Do you know how many old houses are around us and the stories beneath the bricks? A friend of mine once told me that there is more history hidden in the humble little old house then we could image. But they are being demolished without being researched, learned, appreciated even discovered.</p>
+            <p class="lead">
+                如果您来到这里，说明您是老房子开发、测试人员、团队成员的好基友（或者其他等效的存在），
+                我们非常感谢你能体验老房子，并且提供反馈。 <br/>
+                您目前体验的是，Revision：？，发布日期：2015/04/13，是首次公开。预计下一次更新会有大量好玩的功能加入，就近期吧，我们会通知您的。
+            </p>
+            <p>
+                <a href="@Url.RouteUrl("houseNear")" class="btn btn-primary btn-lg lead">显示附近的房子</a>
+            </p>
+        </div>
+        <div class="col-sm-3 " >
+            <img class="img-responsive" id="qrEntry" src="/Content/Images/components/qrEntry.png" alt="手机请扫描访问" />
+            <label class="text-justify" for="qrEntry">手机请扫描访问</label>
+        </div>
+    </div>
+</div>
+

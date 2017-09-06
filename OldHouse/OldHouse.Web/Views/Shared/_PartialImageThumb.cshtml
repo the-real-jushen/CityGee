@@ -1,0 +1,10 @@
+﻿
+@model string
+
+<div class="dz-preview dz-processing dz-success dz-complete dz-image-preview">
+    <div class="dz-image">
+        <img data-dz-thumbnail="" src="@Model" style="width:120px;height:120px;">
+    </div>
+    <a data-dz-remove="" href="javascript:undefined;" class="dz-remove" onclick="deleteParent(this)">删除</a>
+    <input type="text" value="@Model" class="hidden" name="Images[]">
+</div>

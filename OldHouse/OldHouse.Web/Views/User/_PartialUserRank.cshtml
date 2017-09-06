@@ -1,0 +1,63 @@
+﻿@model List<OldHouse.Web.Models.UserInformationDto>
+
+@{
+    foreach (var user in Model)
+    {
+        <div class="list-group">
+            <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @user.Id })" class="list-group-item profile rank">
+                <div class="avatar">
+                    <img src="/Content/Images/avatar/@user.Avatar" class="avatar-img" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                    <h5 class="one-line">@user.NickName</h5>
+                </div>
+                @if (user.Sex.Equals("男"))
+                {
+                    <img src="/Content/Images/components/male.png" class="ico-sm" />
+                }
+                else
+                {
+                    <img src="/Content/Images/components/female.png" class="ico-sm" />
+                }
+                <div class="list-group-item-heading">
+                    得分:<b class="rankCount">@user.MyPoint</b>
+                </div>
+                <div class="pointCount one-line">
+                    排名<h2>@(user.MyRank)</h2>
+                </div>
+                <div class="list-group-item-text row">
+                    <div class="col-sm-3">
+                        <div class="count one-line">
+                            <div class="col-xs-6">
+                                发现<b>@user.DiscoveryCount</b>
+                            </div>
+                            <div class="col-xs-6">
+                                <img src="~/Content/Images/components/approve.png" style="width:20px;" /><b>@user.GrantedDiscoveryCount</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="count one-line">
+                            <div class="col-xs-6">
+                                签到<b>@user.CheckinCount</b>
+                            </div>
+                            <div class="col-xs-6">
+                                <img src="~/Content/Images/components/approve.png" style="width:20px;" /><b>@user.GrantedCheckinCount</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-xs-6">
+                            <div class="count one-line">
+                                被赞<b>@user.BeLikedCount</b>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="count one-line">
+                                粉丝<b>@user.BeFollowedCount</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+}

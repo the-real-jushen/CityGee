@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Jtext103.BlogSystem;
+
+namespace Jtext103.OldHouse.Business.Models
+{
+    public class CheckIn:BlogPostEntity
+    {
+        public GeoPoint Location { get; set; }
+
+        public CheckIn():base()
+        {
+                
+        }
+        
+        public CheckIn(BasicUser user, Guid targetId, string title, string content,List<Asset> asset,GeoPoint location ):base(user,targetId,title,content,asset)
+        {
+            Location = location;
+            EntityType = "CheckIn";
+            BlogType = "CheckIn";
+        }
+    }
+}

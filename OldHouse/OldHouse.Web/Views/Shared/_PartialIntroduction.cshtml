@@ -1,0 +1,48 @@
+﻿
+<div class="introduction">
+    <article>
+        <p class="title">“城市是文化的容器”——芒福德《城市文化》</p>
+        <p>嗨</p>
+        <p>这里是城迹</p>
+        <p>您可以在这儿发现身边有故事的建筑</p>
+        <p>也可以在这儿分享您和城市的故事</p>
+        <p>更可以在这儿认识同样喜欢城迹、热爱城市历史的朋友们</p>
+        <p>现在请您用一点点时间完成简单的注册</p>
+        <p>也希望您多提出意见与建议</p>
+        <p>帮助咱们不断完善</p>
+    </article>
+    @if (ViewBag.LatestArticle != null)
+    {
+        <div class="news">
+            <b><span class="glyphicon glyphicon-fire"></span>新闻：</b>
+            <a href="@Url.RouteUrl("Editor_default", new { area = "", action = "Article", id = ViewBag.LatestArticle.Id })" target="_blank">@ViewBag.LatestArticle.Title （@ViewBag.LatestArticle.CreatedTime.ToLocalTime()）</a>
+            <div class="pull-right">
+                <a href="@Url.RouteUrl("Editor_default", new { area = "", action = "ArticleList" })" target="_blank">
+                    查看更多<span class="glyphicon glyphicon-arrow-right"></span>
+                </a>
+            </div>
+        </div>
+    }
+    
+    <img class="qrcode" src="~/Content/Images/components/qrWeiXin.jpg" style="width:100px;position:absolute;bottom:80px;left:20px;cursor:pointer;" />
+    <img class="qrcode" src="~/Content/Images/components/AppDownload.png" style="width:100px;position:absolute;bottom:80px;left:150px;cursor:pointer;" />
+    <img src="~/Content/Images/components/sitelogo_xs.png" class="ico-md" style="position:absolute;bottom:80px;right:20px;"/>
+    <div class="footer">
+        <a href="@Url.RouteUrl("Default", new { controller = "Home", action = "CooperativePartner" })" target="_blank">合作伙伴</a>
+        <span class="dotted">|</span>
+        <a href="@Url.RouteUrl("Default", new { controller = "Home", action = "AppDownload" })" target="_blank">APP下载</a>
+        <span class="dotted">|</span>
+        <a href="@Url.RouteUrl("Default", new { controller = "Home", action = "WebSiteHistory" })" target="_blank">网站历史</a>
+        <span class="dotted">|</span>
+        <a href="@Url.RouteUrl("Default", new { controller = "Home", action = "AboutUs" })" target="_blank">关于我们</a>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $(".qrcode").on("click", function () {
+            $('#imgModal').modal('toggle');
+            $('#imgModal img').attr('src', $(this).attr('src'));
+        });
+    })
+</script>

@@ -1,0 +1,108 @@
+﻿@using OldHouse.Web.Models
+@model IEnumerable<OldHouse.Web.Models.CheckInDto>
+
+<div id="pageContent1">
+    @foreach (var checkin in Model)
+    {
+        <div class="row">
+            <div class="pull-left col-xs-4 col-sm-2 ">
+                @Html.Action("UserBrief", "Account", new {area = "Account", id = checkin.UserId})
+            </div>
+            <div class="col-xs-8 col-sm-10 ">
+                <a href="@Url.RouteUrl("CheckinDetail", new {id = checkin.Id})">
+                    <p>@checkin.Content</p>@*//todo datetime, like, thumb resize*@
+                </a>
+                <p>
+                    @for (int i = 0; i < checkin.Images.Count(); i++)
+                    {
+
+                        if (i == 5 && i != checkin.Images.Count())
+                        {
+                            <a href="@Url.RouteUrl("CheckinDetail",new {id=checkin.Id})">
+                                <i class="glyphicon glyphicon-option-horizontal gf-2x hidden-xs"></i>
+                            </a>
+                            break;
+                        }
+                        //you dont have Jqeury loaded when this partial is loaded, so you have to use plain JS to register event
+                        <a class="imgClick" href="#imgModal" data-toggle="modal" data-img-url="@checkin.Images[i]" onclick="$('#imgModal img').attr('src', $(this).attr('data-img-url'));">
+                            <img class="checkin-thumb @(i < 2 ? "" : "hidden-xs")" src="@checkin.Images[i]"/>
+                        </a>
+
+                    }
+                    @if (checkin.Images.Count() > 2)
+                    {
+                        <a href="@Url.RouteUrl("CheckinDetail",new {id=checkin.Id})">
+                            <span class="visible-xs-inline glyphicon glyphicon-option-horizontal gf-2x"></span>
+                        </a>
+                    }
+
+                </p>
+            </div>
+        </div>
+    }
+
+
+    <div class="row">
+        <div class="pull-right" style="padding-right: 6%">
+            @if (ViewBag.PageControl != null)
+            {
+                ViewBag.PageControl.UseAjax = true;
+                ViewBag.PageControl.PageContentId = "pageContent1";
+                @Html.Partial("_PartialPaging", (PageControl) ViewBag.PageControl)
+            }
+        </div>
+
+    </div>
+
+    @*image modal*@
+    @*<div id="imgModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <img src="/Content/Images/components/loading.gif" style="width: 100%">
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+</div>
+
+<script>
+    //function centerModal() {
+    //    $(this).css('display', 'block');
+    //    var $dialog = $(this).find(".modal-dialog");
+    //    var offset = ($(window).height() - $dialog.height()) / 2;
+    //    // Center modal vertically in window
+    //    $dialog.css("margin-top", offset);
+    //}
+
+    //$('.modal').on('show.bs.modal', centerModal);
+    //$(window).on("resize", function () {
+    //    $('.modal:visible').each(centerModal);
+    //});
+
+    $(".imgClick").on("click", function (e) {
+        console.log($(this).attr('data-img-url'));
+        $('#imgModal img').attr('src', $(this).attr('data-img-url'));
+
+    });
+    
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

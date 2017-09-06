@@ -1,0 +1,19 @@
+﻿@model List<string>
+
+<div class="panel">
+    <div class="panel-heading panel-primary">
+        标签：
+    </div>
+    <div class="panel-body">
+        <ul>
+            @foreach (var tag in Model)
+            {
+                <li class="badge">
+                    @tag
+                </li>
+            }
+
+        </ul>
+    </div>
+    
+</div>

@@ -1,0 +1,44 @@
+﻿@model OldHouse.Web.Models.HouseBrief
+
+
+@{
+    var id = Model.Id.ToString();
+    <div class="house-card card">
+        <a href="@Url.RouteUrl("houseDetail", new { id, dis = @Model.DistanceInKm })">
+            @if (string.IsNullOrEmpty(Model.Cover))
+            {
+                <img class="img-responsive top center-block" src="~/Content/Images/components/noImage.jpg" alt="@Model.Name" />
+            }
+            else
+            {
+                <img class="img-responsive top center-block" src="@Model.Cover" alt="@Model.Name" onerror="javascript:this.src='/Content/Images/components/noImage.jpg'" />
+            }
+            <div class="content">
+                <b class="title">@Model.Name &nbsp;<img src="~/Content/Images/components/approve.png" class="approve @(Model.IsApproved?"":"hidden")" style="width:17px;" /></b>
+                <p class="time">
+                    创建时间：@Model.CreateTime.ToLocalTime().ToString()
+                </p>
+                <p>
+                    简介：@Model.Abstarct
+                </p>
+                <p class="location">
+                    地点：@Model.LocationString
+                </p>
+                @if (Model.DistanceInKm != null)
+                {
+                    <p>
+                        距离：<span class="houseDis" data-location="@(Model.Location.coordinates[0] + ";" + Model.Location.coordinates[1])">@Model.DistanceInKm</span> 公里
+                    </p>
+                }
+                
+            </div>
+            <div class="bottom-bar">
+                <div class="pull-left">
+                    <span class="glyphicon glyphicon-flag" title="签到次数" data-toggle="tooltip" data-placement="top">@Model.CheckinCount</span>
+                    <span class="glyphicon glyphicon-heart" title="获赞次数" data-toggle="tooltip" data-placement="top">@Model.LikeCount</span>
+                </div>
+                <div class="pull-right">By:@Model.OwnerName</div>
+            </div>
+        </a>
+    </div>
+}

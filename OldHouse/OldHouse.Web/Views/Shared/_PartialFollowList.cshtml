@@ -1,0 +1,54 @@
+﻿@using OldHouse.Web.Models
+@model IEnumerable<OldHouse.Web.Models.UserDisplayDto>
+
+
+@foreach (UserDisplayDto user in Model)
+{
+    <div class="follow-card card @user.Id.ToString()">
+        <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @user.Id.ToString() })">
+            <img src="/Content/Images/avatar/@user.Avatar" class="img-responsive top full-width" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+            <div style="position:absolute;right:10px;top:10px;" title="@user.Sex" data-toggle="tooltip" data-placement="top">
+                @if (user.Sex.Equals("男"))
+                {
+                    <img src="/Content/Images/components/male.png" class="ico" />
+                }
+                else
+                {
+                    <img src="/Content/Images/components/female.png" class="ico" />
+                }
+            </div>
+            <div class="content">
+                <b class="title">@user.NickName</b>
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true" title="邮箱：@user.UserName" data-toggle="tooltip" data-placement="top"></span>
+                <p>
+                    @user.UserName
+                </p>
+            </div>
+        </a>
+        <div class="bottom-bar">
+            <div class="pull-left">
+                <span class="glyphicon glyphicon-flag" title="发现城迹" data-toggle="tooltip" data-placement="top">@user.DiscoveryCount</span>
+                <span class="glyphicon glyphicon-heart" title="签到次数" data-toggle="tooltip" data-placement="top">@user.CheckinCount</span>
+            </div>
+            <div class="pull-right">
+                @if (user.IsEditor)
+                {
+                    <span class="glyphicon glyphicon-pencil" title="主编" data-toggle="tooltip" data-placement="top"></span>
+                }
+                @if (user.IsDeveloper)
+                {
+                    <span class="glyphicon glyphicon-wrench" title="程序猿" data-toggle="tooltip" data-placement="top"></span>
+                }
+                @if (user.IsAdmin)
+                {
+                    <span class="glyphicon glyphicon-lock" title="管理员" data-toggle="tooltip" data-placement="top"></span>
+                }
+                <span class="glyphicon glyphicon-camera" title="注册用户" data-toggle="tooltip" data-placement="top"></span>
+                @if (ViewBag.User == null || !ViewBag.User.Id.Equals(user.Id))
+                {
+                    @Html.Action("FollowMe", "Follow", new { area = "", id = user.Id.ToString() })
+                }
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,42 @@
+<resources>
+
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorPrimaryDark">@color/orange_primary_dark</item>
+        <item name="colorControlNormal">@color/orange_primary_dark</item>
+        <item name="colorControlActivated">@color/orange_primary</item>
+        <item name="colorControlHighlight">@color/orange_primary</item>
+    </style>
+
+    <!-- Main activity theme. -->
+    <style name="Main" parent="AppTheme">
+        <item name="actionBarStyle">@style/ActionBar.Solid.Sunshine.NoTitle</item>
+        <item name="elevation">0dp</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- main activity action bar styles -->
+    <style name="ActionBar.Solid.Sunshine.NoTitle" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="displayOptions">useLogo|showHome</item>
+        <item name="logo">@drawable/ic_ic_actionbar</item>
+        <item name="elevation">0dp</item>
+
+    </style>
+
+
+    <style name="CityGeeButtons" >
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:background">@color/orange_primary</item>
+        <item name="android:layout_margin">16dp</item>
+        <item name="android:layout_height">@dimen/abc_button_inset_vertical_material</item>
+    </style>
+
+    <style name="CityGeeEditText" >
+        <item name="android:textColor">@color/orange_primary</item>
+        <item name="android:textColorHint">@color/orange_primary</item>
+
+    </style>
+
+</resources>

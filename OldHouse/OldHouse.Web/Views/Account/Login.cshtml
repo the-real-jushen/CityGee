@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "登录城迹";
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container container-responsive">
+    <div class="row">
+        <div class="col-md-8 hidden-sm hidden-xs">
+            @Html.Partial("_PartialIntroduction")
+        </div>
+        <div class="col-md-4" style="padding:0;margin:0 auto;">
+            <section class="loginForm">
+                <div class="header">
+                    <a href="javascript:void(0);" id="QuickLogin" onclick="showQuickLogin()">快速登录</a>
+                    <a href="javascript:void(0);" id="EmailLogin" onclick="showEmailLogin()">帐号密码登录</a>
+                </div>
+                <div class="quickLogin" style="display:none;">
+                    <div class="body">
+                        @Html.Partial("_PartialQuickLogin")
+                    </div>
+                    <div class="bottom">
+                        <a href="javascript:void(0);" onclick="showEmailLogin()">帐号密码登录</a>
+                        <span class="dotted">|</span>
+                        @Html.ActionLink("注册新账号", "Register", new { ReturnUrl = ViewBag.ReturnUrl })
+                        <span class="dotted">|</span>
+                        <a href="@Url.RouteUrl("houseNear")" data-dismiss="modal">看看再说</a>
+                    </div>
+                </div>
+                <div class="emailLogin" style="display:none;">
+                    <div class="body">
+                        @Html.Partial("_PartialLogin", new OldHouse.Web.Models.LoginViewModel())
+                    </div>
+                    <div class="bottom">
+                        <a href="javascript:void(0);" onclick="showQuickLogin()">快速登录</a>
+                        <span class="dotted">|</span>
+                        @Html.ActionLink("注册新账号", "Register", new { ReturnUrl = ViewBag.ReturnUrl })
+                        <span class="dotted">|</span>
+                        <a href="javascript:void(0);">忘记密码</a>
+                        <span class="dotted">|</span>
+                        <a href="@Url.RouteUrl("houseNear")">看看再说</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="urlQRCode">
+    <div class="item">
+        <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+        <label class="text-justify" for="url">手机请扫描登陆</label>
+    </div>
+</script>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(function () {
+            //radom bg
+            randomSplash();
+            //QRCode
+            $(".side-fixed .qrCode").append($("#urlQRCode").html());
+            amplify.request({
+                resourceId: 'QRCode',
+                data: {
+                    "url": location.href,
+                },
+                success: function (data) {
+                    $("#url").attr("src", "data:img/png;base64," + data);
+                }
+            });
+            if (is_weixin()) {
+                showQuickLogin();
+            }
+            else {
+                showEmailLogin();
+            }
+        })
+        function randomSplash() {
+            if (window.innerWidth > 767)
+            {
+                var n = Math.floor(Math.random() * 18);
+                $('.body-content').css('background', "url(/Content/Images/components/index_" + n + ".jpg) no-repeat #808080");
+                $('.body-content').css("background-size", "150%");
+            }
+        }
+    </script>
+}

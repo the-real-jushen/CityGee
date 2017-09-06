@@ -1,0 +1,125 @@
+﻿@model OldHouse.Web.Models.CheckInDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "签到详情--"+Model.HouseName;
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/css/galleryview")
+}
+
+
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container ">
+    <div class="col-sm-8  col-sm-offset-2 detail-section">
+        @if (Model.Images.Any())
+        {
+            <div class="row">
+                <div class="col-sm-12 detail-content">
+                    <ul id="checkinImg" class="galleryView">
+                        @foreach (var image in Model.Images)
+                        {
+                            <li><img src="@image" alt=""/></li>
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        }
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="pull-left col-xs-3 col-sm-2">
+                        @Html.Action("UserBrief", "Account", new {area = "Account", id = @Model.UserId})
+                    </div>
+                    <div class="col-xs-9 col-sm-10">
+                        <p>@Model.Content</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="solid-line-grey" />
+        <div class="row">
+            <div class="col-md-6">
+                <label for="CheckinHouse">签到地点</label>
+                <div id="CheckinHouse">
+                    @Html.Action("Brief", "House", new { id = Model.TargetId, area = "House" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="center-cropped" style="max-height: 320px;" >
+                    <label for="mapImg">我签到时所在的地点（是不是没必要显示出来？）</label>
+                    <p id="mapImg">
+                      <img src="http://restapi.amap.com/v3/staticmap?markers=mid,0xFF0000,A:@(Model.Lnt),@(Model.Lat)&zoom=14&key=c7282dd5eb422b550a6bb8cae36afe6f" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@*image modal*@
+<div id="imgModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body" >
+                <img  src="/Content/Images/components/loading.gif" style="width: 100%;">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/galleryview")
+
+
+    <script>
+        $(function() {
+            //set up the gallery
+            var $galleries = $('.galleryView');
+
+            $.each($galleries, function(index, gallery) {
+                gallery.galleryDivParent = $(gallery).parent();
+                $(gallery).galleryView(null, function() {
+                    //set up gallery click                  
+                    $(".gv_panelWrap").css("cursor", "hand").css("cursor", "pointer");
+                    $(".gv_panelWrap").on("click", function() {
+                        $('#imgModal').modal('toggle');
+                        $('#imgModal img').attr('src', $(this).find("img").attr('src'));
+
+                    });
+
+                });
+            });
+
+
+//set up responsive gallery
+            function resizeTheGalleries() {
+                $.each($galleries, function(index, gallery) {
+                    var $galleryParent = gallery.galleryDivParent;
+                    var new_frame_width = $galleryParent.width() * 0.16;
+                    var new_frame_height = $galleryParent.width() * 0.09;
+                    var new_panel_width = $galleryParent.width();
+                    var new_panel_height = new_panel_width * .4;
+                    $(gallery).resizeGalleryView(new_panel_width, new_panel_height, new_frame_width, new_frame_height);
+                });
+            }
+
+            $(window).resize(resizeTheGalleries);
+            resizeTheGalleries();
+
+            //update the distance in the house brief
+            getLocation(function(point) {
+                var loc=point.coords.longitude+";"+point.coords.latitude;
+                updateDistance("houseDis", loc);
+            });
+
+
+        });
+    </script>
+
+}

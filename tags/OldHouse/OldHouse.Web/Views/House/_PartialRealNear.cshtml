@@ -1,0 +1,27 @@
+﻿@using OldHouse.Web.Models
+@model List<OldHouse.Web.Models.HouseBrief>
+
+<div class="container">
+    <div class="row">
+        @{
+            var row = Math.Ceiling(Model.Count()/3.0);
+            for (int i = 0; i <= row; i++)
+            {
+                <div class="row">
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        int index = (int) i*3 + j;
+                        if (index >= Model.Count())
+                        {
+                            break;
+                        }
+                        var house = Model.ToList()[index];
+                        <div class="col-sm-3 well house-card ">
+                            @Html.Partial("_PartialHouseBrief", Model[index])
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

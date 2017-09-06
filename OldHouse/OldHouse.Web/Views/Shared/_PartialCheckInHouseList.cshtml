@@ -1,0 +1,56 @@
+﻿@using OldHouse.Web.Controllers
+@using OldHouse.Web.Models
+@model IEnumerable<OldHouse.Web.Models.CheckInDto>
+
+
+@foreach (CheckInDto checkin in Model)
+{
+    var cover = (string.IsNullOrEmpty(checkin.HouseCover) ? "~/Content/Images/components/noImage.jpg" : @checkin.HouseCover);
+    <div class="media @checkin.UserId checkin-card card">
+        <a href="@Url.RouteUrl("CheckinDetail", new {id = checkin.Id})" title="签到详情" data-toggle="tooltip" data-placement="top">
+            <img class="img-responsive img-rounded" src="@cover" alt="@checkin.HouseName" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'" />
+            <div class="top-bar">
+                <h4>@checkin.HouseName</h4>
+            </div>
+            <div class="content row" style="position:relative;">
+                <div class="text-center col-xs-4" style="position:relative;">
+                    <img class="avatar-img media-object" src="/Content/Images/avatar/@checkin.UserAvatar" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                    <h5>@checkin.UserNickName</h5>
+                    @if (ViewBag.User == null || !ViewBag.User.Id.Equals(checkin.UserId))
+                    {
+                        <div style="position:absolute;bottom:20px;right:0;">
+                            @Html.Action("FollowMe", "Follow", new { area = "", id = checkin.UserId })
+                        </div>
+                    }
+                </div>
+                <div class="checkin-information col-xs-8">
+                    <div class="bubble">
+                        <div class="bubble-item">
+                            <span class="triangle"></span>
+                            <div class="article">
+                                <p>
+                                    <img src="~/Content/Images/components/Approve.png" class="essence @(checkin.IsEssence ? "" : "hidden")" style="width:20px;" />@checkin.Content
+                                </p>
+                            </div>
+                        </div>
+                        @for (int i = 0; i < checkin.Images.Count(); i++)
+                        {
+                            <div class="bubble-item">
+                                <span class="triangle"></span>
+                                <div class="article">
+                                    <img class="checkin-thumb @(i < 2 ? "" : "hidden-xs")" src="@checkin.Images[i]" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </a>
+        <div class="bottom-bar">
+            <span>签到时间：@checkin.ModifyTime</span>
+            <div class="operation pull-right">
+                @Html.Action("LikeMe", "LikeRateFav", new { area = "", id = checkin.Id })
+            </div>
+        </div>
+    </div>
+}

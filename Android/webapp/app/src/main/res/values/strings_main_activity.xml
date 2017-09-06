@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_tab_news">新鲜</string>
+    <string name="title_tab_near">附近城迹</string>
+    <string name="title_tab_checkin">签到</string>
+    <string name="title_tab_house">城迹</string>
+</resources>

@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.citygee.zhengwei.citygee.NormalActivity">
+    <item android:id="@+id/action_profile" android:title="@string/title_menu_profile"
+        android:orderInCategory="90" app:showAsAction="never" />
+
+
+
+    <item android:id="@+id/action_logout" android:title="@string/title_menu_logout"
+        android:orderInCategory="99" app:showAsAction="never" />
+</menu>

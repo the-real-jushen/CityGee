@@ -1,0 +1,121 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "城迹管理";
+}
+
+@if (ViewBag.UserClient == "Browser")
+{
+    <div class="banner-section" style="margin-bottom:40px;">
+        <div class="input-group full-width">
+            <input type="text" class="form-control search" name="search" placeholder="Search for..." style="width:80%;">
+            <input class="btn btn-default" type="button" id="searchHouses" style="width:20%;" value="Go!" />
+        </div>
+    </div>
+}
+else
+{
+    <div class="clearfix housDetail-fix"></div>
+    <div style="display:none;">
+        <input type="text" class="form-control search" name="search" placeholder="Search for..." style="width:80%;">
+        <input class="btn btn-default" type="button" id="searchHouses" style="width:20%;" value="Go!" />
+    </div>
+}
+
+<div id="loading-img" class="container"></div>
+<div id="content">
+
+</div>
+<div id="loading-more" class="container"></div>
+@if (ViewBag.PageControl.LastPage > 1)
+{
+    ViewBag.PageControl.AutoPaging = true;
+    @Html.Partial("_PartialPaging", (OldHouse.Web.Models.PageControl)ViewBag.PageControl)
+}
+
+@section scripts
+{
+    <script src="/Scripts/freewall.js"></script>
+    <script>
+        $(function () {
+            $(".banner-section").slideDown("slow", function () {
+                // Animation complete.
+            });
+            var query = getQueryJson();
+            if (query.search)
+            {
+                $("input[name='search']").val(query.search);
+            }
+            else
+            {
+                query.search = "";
+            }
+            query.sortbykey = "CreateTime";
+            query.ascend = false;
+            wall = new Freewall("#content");
+            wall.reset({
+                selector: '.card',
+                animate: true,
+                cellW: 250,
+                cellH: 'auto',
+                onResize: function () {
+                    wall.fitWidth();
+                }
+            });
+
+            var query = "?search=" + query.search + "&sortbykey=" + query.sortbykey + "&ascend=" + query.ascend + "&page=@(ViewBag.PageControl.CurrentPage)&pagesize=@(ViewBag.PageControl.PageSize)";
+            var route = "/House/HouseList";
+            $("#content").data("route", route);
+            $("#content").data("currentPage", "@(ViewBag.PageControl.CurrentPage)");
+            $("#content").data("lastPage", "@(ViewBag.PageControl.LastPage)");
+            $("#content").data("pageSize", "@(ViewBag.PageControl.PageSize)");
+            appendBlock(route + query);
+
+            $("#checkboxInput").prop("checked", true);
+            $(window).scroll(function () {
+                var a = $(this).scrollTop();
+                var b = $(this).height();
+                var c = $(document).height();
+                var nextPage = parseInt($("#content").data("currentPage")) + 1;
+                var lastPage = parseInt($("#content").data("lastPage"));
+                if (a + b == c && $("#checkboxInput").is(":checked") && (nextPage <= lastPage)) {
+                    $("#content").data("currentPage", nextPage);
+                    var query = "?search=" + $("input[name='search']").val() + "&page=" + $("#content").data("currentPage") + "&pagesize=" + $("#content").data("pageSize");
+                    var route = $("#content").data("route");
+                    appendBlock(route + query);
+                    if (nextPage == lastPage) {
+                        alertModal("没有更多了");
+                    }
+                }
+            });
+        });
+        function appendBlock(url) {
+            $('#loading-more').load("/home/loadingmore");
+            $.get(url, function (data) {
+                var cards = $(data).filter("div.card");
+                wall.appendBlock(cards);
+                wall.container.find('.card img').load(function () {
+                    wall.fitWidth();
+                });
+                setTimeout(function () { $('#loading-more').empty(); }, 1000);
+            });
+        }
+        $("#searchHouses").click(function () {
+            var search = $("input[name='search']").val();
+            var query = getQueryJson();
+            if (search == "")
+            {
+                delete query.search;
+            }
+            else
+            {
+                query.search = search;
+            }
+            location.search = jsonToSearch(query);
+        });
+        $("input[name='search']").bind('keypress', function (event) {
+            if (event.keyCode == "13") {
+                $("#searchHouses").click();
+            }
+        });
+    </script>
+}

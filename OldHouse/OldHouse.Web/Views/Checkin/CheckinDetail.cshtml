@@ -1,0 +1,147 @@
+﻿@model OldHouse.Web.Models.CheckInDto
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "签到详情--"+Model.HouseName;
+}
+
+@section styles
+{
+    @Styles.Render("~/Content/css/galleryview")
+}
+
+<div class="clearfix housDetail-fix"></div>
+<div class="container container-responsive">
+    <div class="detail-section">
+        <div class="row detail-content">
+            <div class="col-sm-8">
+                <div class="media @Model.Id" style="border-bottom:solid 1px #808080;">
+                    <div class="media-left">
+                        <div class="text-center" style="position:relative;">
+                            <a href="@Url.RouteUrl("Profile", new { action = "HomePage", id = @Model.UserId.ToString() })">
+                                <img class="avatar-img media-object" src="/Content/Images/avatar/@Model.UserAvatar" style="height:80px;width:80px;margin:10px;" onerror="javascript: this.src = '/Content/Images/avatar/defaultAvatar.jpg'" />
+                                <h5>@Model.UserNickName</h5>
+                            </a>
+                            @{
+                                if (ViewBag.User == null || !ViewBag.User.Id.Equals(Model.UserId))
+                                {
+                                    <div style="position:absolute;bottom:20px;right:0;">
+                                        @Html.Action("FollowMe", "Follow", new { area = "", id = Model.UserId.ToString() })
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="media-body">
+                        <div style="position:relative;padding-bottom:30px;padding-top:20px;min-height:120px;">
+                            <div class="bubble">
+                                <div class="bubble-item">
+                                    <span class="triangle"></span>
+                                    <div class="article">
+                                        <img src="~/Content/Images/components/Approve.png" class="essence @(Model.IsEssence?"":"hidden")" style="width:20px;" />@Model.Content
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="position:absolute;bottom:0;right:0;">
+                                @if (ViewBag.User != null && ViewBag.User.IsEditor)
+                                {
+                                    <div class="approve click" title="精华" data-toggle="tooltip" data-placement="top" onclick="toggleEssence(this, '@Model.Id','@ViewBag.UserClient')">
+                                        <span class="approve glyphicon @(Model.IsEssence ? "glyphicon-star" : "glyphicon-star-empty")"></span>
+                                    </div>
+                                }
+                                @Html.Action("LikeMe", "LikeRateFav", new { area = "", id = Model.Id })
+                            </div>
+                            <div style="position:absolute;top:0;right:0;font-size:12px;">@Model.ModifyTime</div>
+                        </div>
+                    </div>
+                </div>
+                @if (Model.Images.Any())
+                {
+                    <div style="width: 100%;">
+                        <ul id="checkinImg" class="galleryView">
+                            @foreach (var image in Model.Images)
+                            {
+                                <li><img src="@image" alt="" onerror="javascript: this.src = '/Content/Images/components/noImage.jpg'" /></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+            <div class="col-sm-4" style="padding-left:10px;">
+                <h4 style="margin-top:0;"><span class="glyphicon glyphicon-check"></span>签到地点</h4>
+                <div class="full-card">
+                    <!--
+                    <img src="http://apis.map.qq.com/ws/staticmap/v2/?key=4QCBZ-SWRH5-JC5I6-QQ6WW-GZWG6-6WF5K&size=330*330&center=@(Model.Lat),@(Model.Lnt)&zoom=14&markers=color:blue|label:签|@(Model.Lat),@(Model.Lnt)" class="center-block img-responsive" style="margin-bottom:10px;"/>
+                -->
+                    @Html.Action("Brief", "House", new { id = Model.TargetId, area = "House" })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="urlQRCode">
+    <div class="item">
+        <img class="img-responsive" id="url" src="/Content/Images/components/qrEntry.png" />
+        <label class="text-justify" for="url">手机请扫描访问本页</label>
+    </div>
+</script>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/galleryview")
+
+
+    <script>
+        $(function() {
+            //set up the gallery
+            var $galleries = $('.galleryView');
+            $.each($galleries, function (index, gallery) {
+                gallery.galleryDivParent = $(gallery).parent();
+                $(gallery).galleryView(null, function () {
+                    //set up gallery click
+                    $(".gv_panelWrap").css("cursor", "pointer");
+                    $(".gv_panelWrap").on("click", function () {
+                        $('#imgModal').modal('toggle');
+                        $('#imgModal img').attr('src', $(this).find("img").attr('src'));
+                    });
+                });
+            });
+            //set up responsive gallery
+            function resizeTheGalleries() {
+                $.each($galleries, function (index, gallery) {
+                    var $galleryParent = gallery.galleryDivParent;
+                    var new_frame_width = $galleryParent.width() * 0.16;
+                    var new_frame_height = $galleryParent.width() * 0.09;
+                    var new_panel_width = $galleryParent.width() * 0.985;
+                    var new_panel_height = new_panel_width * .4;
+                    $(gallery).resizeGalleryView(new_panel_width, new_panel_height, new_frame_width, new_frame_height);
+                });
+            }
+            $(window).resize(resizeTheGalleries);
+            resizeTheGalleries();
+
+            //update the distance in the house brief
+            getLocation(function(point) {
+                var loc=point.coords.longitude+";"+point.coords.latitude;
+                updateDistance("houseDis", loc);
+            });
+
+            //QRCode
+            $(".side-fixed .qrCode").append($("#urlQRCode").html());
+            $("#otherOperation").load("/LikeRateFav/Likeme" + "?id=@Model.Id");
+            amplify.request({
+                resourceId: 'QRCode',
+                data: {
+                    "url": location.href,
+                },
+                success: function (data) {
+                    $("#QRCode").attr("src", "data:img/png;base64," + data);
+                }
+            });
+            if (is_weixin()) {
+                $('#shareInWeixin').slideDown("slow");
+            }
+        });
+    </script>
+
+}
